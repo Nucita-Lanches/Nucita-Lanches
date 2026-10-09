@@ -14,8 +14,8 @@ public class Restaurante {
         }
     }
 
-    public void cadastrarMesa(Mesa mesa) {
-        BancoDeDados.getInstancia().adicionarMesa(mesa);
+    public boolean cadastrarMesa(Mesa mesa) {
+        return BancoDeDados.getInstancia().adicionarMesa(mesa);
     }
 
     public Mesa consultarMesaPorNumero(Integer numero) {
