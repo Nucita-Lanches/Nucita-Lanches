@@ -54,31 +54,41 @@ public class BancoDeDados {
     }
 
     // MESAS
-    public void adicionarMesa(Mesa mesa) {
-        if (buscarMesaPorNumero(mesa.getNumero()) != null) {
-            throw new IllegalArgumentException("Já existe uma mesa com esse identificador.");
+    public boolean adicionarMesa(Mesa mesa) {
+        if (mesa == null || mesa.getNumero() == null || mesa.getNumero() <= 0) {
+            System.out.println("numero da mesa invalido.");
+            return false;
         }
+
+        if (buscarMesaPorNumero(mesa.getNumero()) != null) {
+            System.out.println("já existe uma mesa com esse número.");
+            return false;
+        }
+
         mesas.add(mesa);
+        return true;
     }
 
     public Mesa buscarMesaPorNumero(Integer numero) {
         if (numero == null) {
             return null;
         }
-        for (Mesa m : mesas) {
-            if (m.getNumero() != null && m.getNumero().equals(numero)) {
-                return m;
+
+        for (Mesa mesa : mesas) {
+            if (mesa.getNumero() != null && mesa.getNumero().equals(numero)) {
+                return mesa;
             }
         }
+
         return null;
     }
 
     public ArrayList<Mesa> listarMesas() {
-        return mesas;
+        return new ArrayList<>(mesas);
     }
 
     public ArrayList<Mesa> getMesas() {
-        return mesas;
+        return new ArrayList<>(mesas);
     }
 
     // ITENS DE PEDIDO
