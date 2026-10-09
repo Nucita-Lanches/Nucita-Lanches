@@ -1,15 +1,27 @@
 package com.senai.nucitalanches.nucitalanches.entities;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-
 public class Produto {
+    private Long id;
     private String nome;
-    private Integer preco;
+    private double preco;
 
-    public Produto(String nome, Integer preco) {
-        this.nome = nome;
+    public Produto(String nome, double preco) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do produto não pode ser vazio ou nulo.");
+        }
+        if (preco < 0) {
+            throw new IllegalArgumentException("Preço do produto não pode ser negativo.");
+        }
+        this.nome = nome.trim();
         this.preco = preco;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -17,42 +29,29 @@ public class Produto {
     }
 
     public void setNome(String nome) {
-        this.nome = nome;
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do produto não pode ser vazio ou nulo.");
+        }
+        this.nome = nome.trim();
     }
 
-    public Integer getPreco() {
+    public double getPreco() {
         return preco;
     }
 
-    public void setPreco(Integer preco) {
+    public void setPreco(double preco) {
+        if (preco < 0) {
+            throw new IllegalArgumentException("Preço do produto não pode ser negativo.");
+        }
         this.preco = preco;
-    }
-
-    public void cadastroProduto() {
-        Scanner entradaTexto = new Scanner(System.in);
-        Scanner entradaNumero = new Scanner(System.in);
-        System.out.println("Digite o nome do produto : ");
-        nome = entradaTexto.nextLine();
-        System.out.println("Digite o preço do produto : ");
-        preco = entradaNumero.nextInt();
-        if (nome == null) {
-            System.err.print("Digite um nome!");
-            return;
-        }
-        if (preco == null) {
-            System.err.print("Digite um preço!");
-            return;
-        }
-         nome = //cria array gab delicios
-         preço = //cria array gab delicioso
     }
 
     @Override
     public String toString() {
         return "Produto{" +
-                "nome='" + nome + '\'' +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
                 ", preco=" + preco +
                 '}';
     }
-
 }
