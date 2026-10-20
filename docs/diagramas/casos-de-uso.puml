@@ -1,0 +1,40 @@
+@startuml
+title Casos de uso — Nucita Lanches
+left to right direction
+skinparam packageStyle rectangle
+
+actor Atendente
+
+rectangle "Sistema Nucita Lanches" {
+  usecase "Cadastrar produto\n<<disponível no menu>>" as UC_CadastrarProduto
+  usecase "Listar produtos\n<<disponível no menu>>" as UC_ListarProdutos
+  usecase "Cadastrar mesa\n<<disponível no menu>>" as UC_CadastrarMesa
+  usecase "Consultar mesa por número\n<<disponível no menu>>" as UC_ConsultarMesa
+  usecase "Listar mesas\n<<disponível no menu>>" as UC_ListarMesas
+
+  usecase "Abrir pedido para mesa\n<<planejado>>" as UC_AbrirPedido
+  usecase "Adicionar produto ao pedido\n<<planejado>>" as UC_AdicionarItem
+  usecase "Remover item do pedido\n<<planejado>>" as UC_RemoverItem
+  usecase "Consultar pedido e total\n<<planejado>>" as UC_ConsultarPedido
+  usecase "Finalizar pedido\n<<planejado>>" as UC_FinalizarPedido
+}
+
+Atendente --> UC_CadastrarProduto
+Atendente --> UC_ListarProdutos
+Atendente --> UC_CadastrarMesa
+Atendente --> UC_ConsultarMesa
+Atendente --> UC_ListarMesas
+
+Atendente ..> UC_AbrirPedido
+Atendente ..> UC_AdicionarItem
+Atendente ..> UC_RemoverItem
+Atendente ..> UC_ConsultarPedido
+Atendente ..> UC_FinalizarPedido
+
+note bottom of UC_CadastrarProduto
+  Os casos marcados como disponíveis
+  estão implementados na classe Main.
+  Os casos tracejados são requisitos do
+  contexto e ainda não têm fluxo no menu.
+end note
+@enduml

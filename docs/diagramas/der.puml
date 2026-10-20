@@ -1,0 +1,47 @@
+@startuml
+title DER conceitual — Nucita Lanches
+hide circle
+skinparam linetype ortho
+
+note top
+  Modelo conceitual previsto pelo PROJECT_CONTEXT.md.
+  Não representa tabelas já existentes: o sistema atual
+  mantém os dados somente em memória.
+end note
+
+entity "MESA" as Mesa {
+  * numero : INTEGER <<PK>>
+}
+
+entity "PEDIDO" as Pedido {
+  * numero_pedido : INTEGER <<PK>>
+  --
+  mesa_numero : INTEGER <<FK>>
+  status : VARCHAR <<planejado>>
+}
+
+entity "ITEM_PEDIDO" as ItemPedido {
+  * id : INTEGER <<PK>>
+  --
+  numero_pedido : INTEGER <<FK>>
+  produto_id : BIGINT <<FK>>
+  quantidade : INTEGER
+}
+
+entity "PRODUTO" as Produto {
+  * id : BIGINT <<PK>>
+  --
+  nome : VARCHAR
+  preco : DECIMAL
+}
+
+Mesa ||--o{ Pedido : "atende ao longo do tempo"
+Pedido ||--o{ ItemPedido : "contém"
+Produto ||--o{ ItemPedido : "é referenciado por"
+
+note bottom of ItemPedido
+  O subtotal é derivado:
+  produto.preco × quantidade.
+  Não é armazenado como atributo.
+end note
+@enduml

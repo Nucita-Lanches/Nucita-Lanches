@@ -1,0 +1,98 @@
+@startuml
+title Diagrama de classes — Nucita Lanches
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package "Implementado" {
+  class Produto <<implementada>> {
+    - id : Long
+    - nome : String
+    - preco : double
+    + Produto(nome: String, preco: double)
+    + getId() : Long
+    + getNome() : String
+    + setNome(nome: String) : void
+    + getPreco() : double
+    + setPreco(preco: double) : void
+  }
+
+  class Mesa <<implementada>> {
+    - numero : Integer
+    + Mesa(numero: Integer)
+    + getNumero() : Integer
+  }
+
+  class Restaurante <<implementada>> {
+    + cadastroProduto(produto: Produto) : void
+    + listarProdutos() : Collection<Produto>
+    + cadastrarMesa(mesa: Mesa) : boolean
+    + consultarMesaPorNumero(numero: Integer) : Mesa
+    + listarMesas() : ArrayList<Mesa>
+  }
+
+  class BancoDeDados <<implementada>> {
+    - produtos : LinkedHashMap<Long, Produto>
+    - mesas : ArrayList<Mesa>
+    - pedidos : LinkedHashMap<Integer, Pedido>
+    - itensPedidos : ArrayList<ItemPedido>
+    + salvarProduto(produto: Produto) : Produto
+    + listarProdutos() : Collection<Produto>
+    + buscarProdutoPorId(id: Long) : Produto
+    + adicionarMesa(mesa: Mesa) : boolean
+    + buscarMesaPorNumero(numero: Integer) : Mesa
+    + listarMesas() : ArrayList<Mesa>
+    + salvarPedido(pedido: Pedido) : Pedido
+    + buscarPedidoPorNumero(numeroPedido: Integer) : Pedido
+    + adicionarItemPedido(itemPedido: ItemPedido) : void
+  }
+
+  class Main <<menu de console>> {
+    + main(args: String[]) : void
+  }
+}
+
+package "Parcial — estrutura presente, requisitos pendentes" {
+  class Pedido <<parcial>> {
+    - numeroPedido : Integer
+    - itemPedido : ItemPedido
+  }
+
+  class ItemPedido <<parcial>> {
+    - produto : Produto
+    - quantidade : Integer
+  }
+}
+
+package "Planejado no contexto do projeto" {
+  enum EstadoPedido <<planejado>> {
+    ABERTO
+    FINALIZADO
+  }
+}
+
+Restaurante --> BancoDeDados : usa
+Main --> Restaurante : conduz o menu
+BancoDeDados "1" o-- "0..*" Produto : armazena
+BancoDeDados "1" o-- "0..*" Mesa : armazena
+BancoDeDados "1" o-- "0..*" Pedido : armazena
+BancoDeDados "1" o-- "0..*" ItemPedido : armazena
+Pedido "1" --> "0..1" ItemPedido : referência atual no código
+ItemPedido "0..*" --> "0..1" Produto : referência atual no código
+
+Mesa "1" .. "0..*" Pedido : vínculo previsto
+Pedido "1" .. "0..*" ItemPedido : coleção prevista
+Pedido ..> EstadoPedido : estado previsto
+
+note right of Pedido
+  A classe atual guarda no máximo
+  uma referência a ItemPedido.
+  O vínculo com Mesa, uma coleção de itens,
+  o estado e as operações de pedido ainda
+  não estão implementados.
+end note
+
+note bottom of ItemPedido
+  O cálculo de subtotal e as validações
+  de quantidade ainda estão pendentes.
+end note
+@enduml
