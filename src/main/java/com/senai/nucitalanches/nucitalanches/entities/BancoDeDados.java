@@ -2,22 +2,24 @@ package com.senai.nucitalanches.nucitalanches.entities;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class BancoDeDados {
 
-    private static BancoDeDados instancia;
+    private static final BancoDeDados INSTANCIA = new BancoDeDados();
 
     // Produtos
-    private final Map<Long, Produto> produtos = new HashMap<>();
+    private final Map<Long, Produto> produtos = new LinkedHashMap<>();
     private Long ultimoIdProduto = 0L;
 
     // Mesas
     private final ArrayList<Mesa> mesas = new ArrayList<>();
 
     // Pedidos
-    private final Map<Integer, Pedido> pedidos = new HashMap<>();
+    private final Map<Integer, Pedido> pedidos = new LinkedHashMap<>();
     private Integer ultimoNumeroPedido = 0;
 
     // Itens de Pedido
@@ -27,14 +29,12 @@ public class BancoDeDados {
     }
 
     public static BancoDeDados getInstancia() {
-        if (instancia == null) {
-            instancia = new BancoDeDados();
-        }
-        return instancia;
+        return INSTANCIA;
     }
 
     // PRODUTOS
     public Produto salvarProduto(Produto produto) {
+        Objects.requireNonNull(produto, "Produto não pode ser nulo.");
         ultimoIdProduto += 1;
         produto.setId(ultimoIdProduto);
         produtos.put(ultimoIdProduto, produto);
@@ -42,11 +42,11 @@ public class BancoDeDados {
     }
 
     public Collection<Produto> listarProdutos() {
-        return produtos.values();
+        return Collections.unmodifiableList(new ArrayList<>(produtos.values()));
     }
 
     public Map<Long, Produto> getProdutos() {
-        return produtos;
+        return Collections.unmodifiableMap(new LinkedHashMap<>(produtos));
     }
 
     public Produto buscarProdutoPorId(Long id) {
@@ -56,12 +56,10 @@ public class BancoDeDados {
     // MESAS
     public boolean adicionarMesa(Mesa mesa) {
         if (mesa == null || mesa.getNumero() == null || mesa.getNumero() <= 0) {
-            System.out.println("numero da mesa invalido.");
             return false;
         }
 
         if (buscarMesaPorNumero(mesa.getNumero()) != null) {
-            System.out.println("já existe uma mesa com esse número.");
             return false;
         }
 
@@ -97,15 +95,16 @@ public class BancoDeDados {
     }
 
     public ArrayList<ItemPedido> listarItensPedidos() {
-        return itensPedidos;
+        return new ArrayList<>(itensPedidos);
     }
 
     public ArrayList<ItemPedido> getItensPedidos() {
-        return itensPedidos;
+        return new ArrayList<>(itensPedidos);
     }
 
     // PEDIDOS
     public Pedido salvarPedido(Pedido pedido) {
+        Objects.requireNonNull(pedido, "Pedido não pode ser nulo.");
         ultimoNumeroPedido += 1;
         pedido.setNumeroPedido(ultimoNumeroPedido);
         pedidos.put(ultimoNumeroPedido, pedido);
@@ -113,11 +112,11 @@ public class BancoDeDados {
     }
 
     public Collection<Pedido> listarPedidos() {
-        return pedidos.values();
+        return Collections.unmodifiableList(new ArrayList<>(pedidos.values()));
     }
 
     public Map<Integer, Pedido> getPedidos() {
-        return pedidos;
+        return Collections.unmodifiableMap(new LinkedHashMap<>(pedidos));
     }
 
     public Pedido buscarPedidoPorNumero(Integer numeroPedido) {

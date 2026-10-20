@@ -30,7 +30,7 @@ public class Main {
                     break;
                 case 2:
                     System.out.println("--- Lista de Produtos ---");
-                    restaurante.listarProdutos();
+                    restaurante.listarProdutos().forEach(System.out::println);
                     break;
                 case 3:
                     System.out.println("insira o número da mesa");
@@ -38,6 +38,8 @@ public class Main {
                     boolean mesaCadastrada = restaurante.cadastrarMesa(new Mesa(numeroMesa));
                     if (mesaCadastrada) {
                         System.out.println("Mesa cadastrada");
+                    } else {
+                        System.out.println("Número inválido ou mesa já cadastrada.");
                     }
                     break;
                 case 4:
