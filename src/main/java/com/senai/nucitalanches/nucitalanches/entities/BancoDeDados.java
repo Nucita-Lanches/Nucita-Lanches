@@ -2,22 +2,24 @@ package com.senai.nucitalanches.nucitalanches.entities;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class BancoDeDados {
 
-    private static BancoDeDados instancia;
+    private static final BancoDeDados INSTANCIA = new BancoDeDados();
 
     // Produtos
-    private final Map<Long, Produto> produtos = new HashMap<>();
+    private final Map<Long, Produto> produtos = new LinkedHashMap<>();
     private Long ultimoIdProduto = 0L;
 
     // Mesas
     private final ArrayList<Mesa> mesas = new ArrayList<>();
 
     // Pedidos
-    private final Map<Integer, Pedido> pedidos = new HashMap<>();
+    private final Map<Integer, Pedido> pedidos = new LinkedHashMap<>();
     private Integer ultimoNumeroPedido = 0;
 
     // Itens de Pedido
@@ -27,41 +29,37 @@ public class BancoDeDados {
     }
 
     public static BancoDeDados getInstancia() {
-        if (instancia == null) {
-            instancia = new BancoDeDados();
-        }
-        return instancia;
+        return INSTANCIA;
     }
 
     // PRODUTOS
-    public Produto salvarProduto(Produto produto) {
+    public synchronized Produto salvarProduto(Produto produto) {
+        Objects.requireNonNull(produto, "Produto não pode ser nulo.");
         ultimoIdProduto += 1;
         produto.setId(ultimoIdProduto);
         produtos.put(ultimoIdProduto, produto);
         return produto;
     }
 
-    public Collection<Produto> listarProdutos() {
-        return produtos.values();
+    public synchronized Collection<Produto> listarProdutos() {
+        return Collections.unmodifiableList(new ArrayList<>(produtos.values()));
     }
 
-    public Map<Long, Produto> getProdutos() {
-        return produtos;
+    public synchronized Map<Long, Produto> getProdutos() {
+        return Collections.unmodifiableMap(new LinkedHashMap<>(produtos));
     }
 
-    public Produto buscarProdutoPorId(Long id) {
+    public synchronized Produto buscarProdutoPorId(Long id) {
         return produtos.get(id);
     }
 
     // MESAS
-    public boolean adicionarMesa(Mesa mesa) {
+    public synchronized boolean adicionarMesa(Mesa mesa) {
         if (mesa == null || mesa.getNumero() == null || mesa.getNumero() <= 0) {
-            System.out.println("numero da mesa invalido.");
             return false;
         }
 
         if (buscarMesaPorNumero(mesa.getNumero()) != null) {
-            System.out.println("já existe uma mesa com esse número.");
             return false;
         }
 
@@ -69,7 +67,7 @@ public class BancoDeDados {
         return true;
     }
 
-    public Mesa buscarMesaPorNumero(Integer numero) {
+    public synchronized Mesa buscarMesaPorNumero(Integer numero) {
         if (numero == null) {
             return null;
         }
@@ -83,44 +81,45 @@ public class BancoDeDados {
         return null;
     }
 
-    public ArrayList<Mesa> listarMesas() {
+    public synchronized ArrayList<Mesa> listarMesas() {
         return new ArrayList<>(mesas);
     }
 
-    public ArrayList<Mesa> getMesas() {
+    public synchronized ArrayList<Mesa> getMesas() {
         return new ArrayList<>(mesas);
     }
 
     // ITENS DE PEDIDO
-    public void adicionarItemPedido(ItemPedido itemPedido) {
+    public synchronized void adicionarItemPedido(ItemPedido itemPedido) {
         itensPedidos.add(itemPedido);
     }
 
-    public ArrayList<ItemPedido> listarItensPedidos() {
-        return itensPedidos;
+    public synchronized ArrayList<ItemPedido> listarItensPedidos() {
+        return new ArrayList<>(itensPedidos);
     }
 
-    public ArrayList<ItemPedido> getItensPedidos() {
-        return itensPedidos;
+    public synchronized ArrayList<ItemPedido> getItensPedidos() {
+        return new ArrayList<>(itensPedidos);
     }
 
     // PEDIDOS
-    public Pedido salvarPedido(Pedido pedido) {
+    public synchronized Pedido salvarPedido(Pedido pedido) {
+        Objects.requireNonNull(pedido, "Pedido não pode ser nulo.");
         ultimoNumeroPedido += 1;
         pedido.setNumeroPedido(ultimoNumeroPedido);
         pedidos.put(ultimoNumeroPedido, pedido);
         return pedido;
     }
 
-    public Collection<Pedido> listarPedidos() {
-        return pedidos.values();
+    public synchronized Collection<Pedido> listarPedidos() {
+        return Collections.unmodifiableList(new ArrayList<>(pedidos.values()));
     }
 
-    public Map<Integer, Pedido> getPedidos() {
-        return pedidos;
+    public synchronized Map<Integer, Pedido> getPedidos() {
+        return Collections.unmodifiableMap(new LinkedHashMap<>(pedidos));
     }
 
-    public Pedido buscarPedidoPorNumero(Integer numeroPedido) {
+    public synchronized Pedido buscarPedidoPorNumero(Integer numeroPedido) {
         return pedidos.get(numeroPedido);
     }
 }

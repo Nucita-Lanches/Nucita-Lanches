@@ -1,6 +1,7 @@
 package com.senai.nucitalanches.nucitalanches.entities;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Restaurante {
 
@@ -8,10 +9,8 @@ public class Restaurante {
         BancoDeDados.getInstancia().salvarProduto(produto);
     }
 
-    public void listarProdutos() {
-        for (Produto p : BancoDeDados.getInstancia().listarProdutos()) {
-            System.out.println(p);
-        }
+    public Collection<Produto> listarProdutos() {
+        return BancoDeDados.getInstancia().listarProdutos();
     }
 
     public boolean cadastrarMesa(Mesa mesa) {
