@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ProdutoTest {
 
@@ -18,8 +19,14 @@ class ProdutoTest {
 
         assertNotNull(produto.getId());
         assertSame(produto, BancoDeDados.getInstancia().buscarProdutoPorId(produto.getId()));
+        assertTrue(BancoDeDados.getInstancia().listarProdutos().contains(produto));
         assertEquals(8.50, produto.getPreco(), 0.001);
         assertEquals("Coxinha", produto.getNome());
+    }
+
+    @Test
+    void aceitaPrecoIgualAZero() {
+        assertEquals(0.0, new Produto("Água", 0.0).getPreco(), 0.001);
     }
 
     @Test
