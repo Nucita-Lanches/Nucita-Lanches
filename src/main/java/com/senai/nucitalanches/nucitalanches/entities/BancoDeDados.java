@@ -33,7 +33,7 @@ public class BancoDeDados {
     }
 
     // PRODUTOS
-    public synchronized Produto salvarProduto(Produto produto) {
+    public Produto salvarProduto(Produto produto) {
         Objects.requireNonNull(produto, "Produto não pode ser nulo.");
         ultimoIdProduto += 1;
         produto.setId(ultimoIdProduto);
@@ -41,20 +41,20 @@ public class BancoDeDados {
         return produto;
     }
 
-    public synchronized Collection<Produto> listarProdutos() {
+    public Collection<Produto> listarProdutos() {
         return Collections.unmodifiableList(new ArrayList<>(produtos.values()));
     }
 
-    public synchronized Map<Long, Produto> getProdutos() {
+    public Map<Long, Produto> getProdutos() {
         return Collections.unmodifiableMap(new LinkedHashMap<>(produtos));
     }
 
-    public synchronized Produto buscarProdutoPorId(Long id) {
+    public Produto buscarProdutoPorId(Long id) {
         return produtos.get(id);
     }
 
     // MESAS
-    public synchronized boolean adicionarMesa(Mesa mesa) {
+    public boolean adicionarMesa(Mesa mesa) {
         if (mesa == null || mesa.getNumero() == null || mesa.getNumero() <= 0) {
             return false;
         }
@@ -67,7 +67,7 @@ public class BancoDeDados {
         return true;
     }
 
-    public synchronized Mesa buscarMesaPorNumero(Integer numero) {
+    public Mesa buscarMesaPorNumero(Integer numero) {
         if (numero == null) {
             return null;
         }
@@ -81,29 +81,29 @@ public class BancoDeDados {
         return null;
     }
 
-    public synchronized ArrayList<Mesa> listarMesas() {
+    public ArrayList<Mesa> listarMesas() {
         return new ArrayList<>(mesas);
     }
 
-    public synchronized ArrayList<Mesa> getMesas() {
+    public ArrayList<Mesa> getMesas() {
         return new ArrayList<>(mesas);
     }
 
     // ITENS DE PEDIDO
-    public synchronized void adicionarItemPedido(ItemPedido itemPedido) {
+    public void adicionarItemPedido(ItemPedido itemPedido) {
         itensPedidos.add(itemPedido);
     }
 
-    public synchronized ArrayList<ItemPedido> listarItensPedidos() {
+    public ArrayList<ItemPedido> listarItensPedidos() {
         return new ArrayList<>(itensPedidos);
     }
 
-    public synchronized ArrayList<ItemPedido> getItensPedidos() {
+    public ArrayList<ItemPedido> getItensPedidos() {
         return new ArrayList<>(itensPedidos);
     }
 
     // PEDIDOS
-    public synchronized Pedido salvarPedido(Pedido pedido) {
+    public Pedido salvarPedido(Pedido pedido) {
         Objects.requireNonNull(pedido, "Pedido não pode ser nulo.");
         ultimoNumeroPedido += 1;
         pedido.setNumeroPedido(ultimoNumeroPedido);
@@ -111,15 +111,15 @@ public class BancoDeDados {
         return pedido;
     }
 
-    public synchronized Collection<Pedido> listarPedidos() {
+    public Collection<Pedido> listarPedidos() {
         return Collections.unmodifiableList(new ArrayList<>(pedidos.values()));
     }
 
-    public synchronized Map<Integer, Pedido> getPedidos() {
+    public Map<Integer, Pedido> getPedidos() {
         return Collections.unmodifiableMap(new LinkedHashMap<>(pedidos));
     }
 
-    public synchronized Pedido buscarPedidoPorNumero(Integer numeroPedido) {
+    public Pedido buscarPedidoPorNumero(Integer numeroPedido) {
         return pedidos.get(numeroPedido);
     }
 }
