@@ -6,12 +6,8 @@ public class Produto {
     private double preco;
 
     public Produto(String nome, double preco) {
-        if (nome == null || nome.trim().isEmpty()) {
-            throw new IllegalArgumentException("Nome do produto não pode ser vazio ou nulo.");
-        }
-        if (preco < 0) {
-            throw new IllegalArgumentException("Preço do produto não pode ser negativo.");
-        }
+        validarNome(nome);
+        validarPreco(preco);
         this.nome = nome.trim();
         this.preco = preco;
     }
@@ -29,9 +25,7 @@ public class Produto {
     }
 
     public void setNome(String nome) {
-        if (nome == null || nome.trim().isEmpty()) {
-            throw new IllegalArgumentException("Nome do produto não pode ser vazio ou nulo.");
-        }
+        validarNome(nome);
         this.nome = nome.trim();
     }
 
@@ -40,10 +34,20 @@ public class Produto {
     }
 
     public void setPreco(double preco) {
-        if (preco < 0) {
-            throw new IllegalArgumentException("Preço do produto não pode ser negativo.");
-        }
+        validarPreco(preco);
         this.preco = preco;
+    }
+
+    private static void validarNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do produto não pode ser vazio ou nulo.");
+        }
+    }
+
+    private static void validarPreco(double preco) {
+        if (!Double.isFinite(preco) || preco < 0) {
+            throw new IllegalArgumentException("Preço do produto deve ser finito e maior ou igual a zero.");
+        }
     }
 
     @Override
