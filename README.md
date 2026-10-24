@@ -1,8 +1,8 @@
 # Nucita Lanches
 
-Aplicação Java desktop em estágio inicial. O código atual contém uma tela JavaFX de exemplo e um fluxo de console para cadastrar e consultar produtos e mesas. Os dados ficam apenas na memória durante a execução.
+Aplicação Java em estágio inicial. O código atual contém uma tela JavaFX de exemplo, um fluxo de console para cadastrar e consultar produtos e mesas e operações de aplicação para criar pedidos e adicionar itens. Os dados ficam apenas na memória durante a execução.
 
-O modelo de pedidos está incompleto: `Pedido` guarda um número e um único `ItemPedido`; ainda não associa mesas, reúne itens, calcula totais nem controla finalização. O fluxo completo de pedidos descrito no contexto é planejamento, não funcionalidade disponível.
+Cada `Pedido` está associado a uma mesa cadastrada, reúne vários `ItemPedido` e começa com status `ABERTO`. Ainda não há cálculo de subtotal ou total, remoção de itens nem fluxo para finalizar pedidos. A tela JavaFX continua sendo apenas um exemplo e não usa essas operações.
 
 ## Requisitos
 
@@ -42,7 +42,7 @@ Compilar e empacotar:
 bash ./mvnw clean package
 ```
 
-No Windows PowerShell, use `.\mvnw.cmd` no lugar de `bash ./mvnw`. Atualmente não há testes em `src/test`; `test` valida a compilação, mas não cobre regras por testes automatizados.
+No Windows PowerShell, use `.\mvnw.cmd` no lugar de `bash ./mvnw`. Os testes JUnit 5 em `src/test` cobrem as validações de `ItemPedido`, o modelo do pedido e as operações de criação e inclusão de itens.
 
 ## Estrutura
 
@@ -50,7 +50,7 @@ No Windows PowerShell, use `.\mvnw.cmd` no lugar de `bash ./mvnw`. Atualmente n�
 src/main/java/com/senai/nucitalanches/nucitalanches/
 ├── application/  # Operações disponibilizadas por Restaurante
 ├── console/      # Menu de console (Main)
-├── domain/       # Produto, Mesa, Pedido e ItemPedido
+├── domain/       # Produto, Mesa, Pedido, ItemPedido e StatusPedido
 ├── storage/      # Armazenamento singleton em memória (BancoDeDados)
 ├── HelloApplication.java
 ├── HelloController.java
