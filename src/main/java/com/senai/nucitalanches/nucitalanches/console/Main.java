@@ -1,4 +1,8 @@
-package com.senai.nucitalanches.nucitalanches.entities;
+package com.senai.nucitalanches.nucitalanches.console;
+
+import com.senai.nucitalanches.nucitalanches.application.Restaurante;
+import com.senai.nucitalanches.nucitalanches.domain.Mesa;
+import com.senai.nucitalanches.nucitalanches.domain.Produto;
 
 import java.util.Scanner;
 

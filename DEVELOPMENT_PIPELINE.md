@@ -14,6 +14,6 @@
 
 - Não há conflito com `main`.
 - O código compila/executa.
-- As regras de subtotal, total, remoção e finalização foram verificadas.
+- Os comportamentos já implementados e afetados pela tarefa foram verificados. Regras ainda planejadas só entram na validação quando forem implementadas em uma tarefa própria.
 - O PR tem pelo menos uma aprovação.
 - Não existem comentários pendentes.

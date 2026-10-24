@@ -1,25 +1,21 @@
-# Contexto do projeto — Restaurante
+# Contexto do projeto
 
-O sistema substitui o controle manual de pedidos realizados nas mesas de um restaurante.
+Nucita Lanches é um projeto de sistema para apoiar o atendimento de uma lanchonete e substituir o controle manual de pedidos. Esta página registra o domínio desejado; a implementação disponível hoje é menor e está descrita em [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md).
 
-## Classes principais
+## Conceitos do domínio
 
-- **Produto:** representa algo disponível para consumo e possui nome e preço.
-- **Mesa:** representa uma mesa do restaurante.
-- **Pedido:** pertence a uma mesa, contém itens e possui estado aberto ou finalizado.
-- **ItemPedido:** associa um produto a uma quantidade dentro de um pedido.
+- **Produto:** item disponível para consumo, com nome e preço.
+- **Mesa:** identifica uma mesa do restaurante.
+- **Pedido:** deveria pertencer a uma mesa e reunir itens.
+- **ItemPedido:** associa um produto a uma quantidade dentro do pedido.
 
-## Regras de negócio
+## Regras planejadas
 
 - Uma mesa pode possuir vários pedidos ao longo do tempo.
-- Cada pedido pertence a uma mesa.
-- Um pedido possui vários itens.
-- Cada item identifica um produto e sua quantidade.
-- O subtotal do item é `preço do produto × quantidade`.
-- O total do pedido é a soma dos subtotais de todos os itens.
-- Remover um item deve atualizar o total do pedido.
-- Um pedido finalizado não deve aceitar alterações de um pedido aberto.
+- Cada pedido pertence a uma mesa e pode conter vários itens.
+- O subtotal de um item é `preço do produto × quantidade`.
+- O total é a soma dos subtotais dos itens.
+- Remover itens atualiza o total.
+- Um pedido finalizado não aceita alterações próprias de um pedido aberto.
 
-## Funcionalidades
-
-Cadastro de produtos e mesas; abertura e associação de pedidos a mesas; inclusão, consulta e remoção de produtos; definição de quantidades; cálculo de subtotais e total; finalização do pedido.
+Essas regras orientam o planejamento. Não indicam funcionalidades já entregues: em particular, o modelo `Pedido` atual ainda não associa mesas, listas de itens, totais ou estado de finalização.
