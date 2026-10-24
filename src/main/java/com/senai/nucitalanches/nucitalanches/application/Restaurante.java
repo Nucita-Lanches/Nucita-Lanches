@@ -1,4 +1,8 @@
-package com.senai.nucitalanches.nucitalanches.entities;
+package com.senai.nucitalanches.nucitalanches.application;
+
+import com.senai.nucitalanches.nucitalanches.domain.Mesa;
+import com.senai.nucitalanches.nucitalanches.domain.Produto;
+import com.senai.nucitalanches.nucitalanches.storage.BancoDeDados;
 
 import java.util.ArrayList;
 import java.util.Collection;

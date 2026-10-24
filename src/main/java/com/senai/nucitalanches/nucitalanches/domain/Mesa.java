@@ -1,4 +1,4 @@
-package com.senai.nucitalanches.nucitalanches.entities;
+package com.senai.nucitalanches.nucitalanches.domain;
 
 public class Mesa {
     private final Integer numero;
