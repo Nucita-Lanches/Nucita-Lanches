@@ -1,21 +1,27 @@
 # Contexto do projeto
 
-Nucita Lanches é um projeto de sistema para apoiar o atendimento de uma lanchonete e substituir o controle manual de pedidos. Esta página registra o domínio desejado; a implementação disponível hoje é menor e está descrita em [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md).
+Nucita Lanches é um projeto de sistema para apoiar o atendimento de uma lanchonete e substituir o controle manual de pedidos. Esta página separa o que o código já oferece das regras que ainda fazem parte do planejamento. A estrutura atual está descrita em [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md).
 
 ## Conceitos do domínio
 
 - **Produto:** item disponível para consumo, com nome e preço.
 - **Mesa:** identifica uma mesa do restaurante.
-- **Pedido:** deveria pertencer a uma mesa e reunir itens.
+- **Pedido:** pertence a uma mesa cadastrada, reúne itens e começa aberto.
 - **ItemPedido:** associa um produto a uma quantidade dentro do pedido.
 
-## Regras planejadas
+## Implementado
 
-- Uma mesa pode possuir vários pedidos ao longo do tempo.
-- Cada pedido pertence a uma mesa e pode conter vários itens.
+- Cadastrar mesas com número positivo e único.
+- Manter vários pedidos associados à mesma mesa cadastrada.
+- Criar pedidos para mesas cadastradas e atribuir número ao pedido.
+- Adicionar ao pedido existente itens com produto não nulo e quantidade positiva.
+- Manter os itens dentro do pedido e expor uma cópia somente para leitura da lista.
+
+## Planejado
+
 - O subtotal de um item é `preço do produto × quantidade`.
 - O total é a soma dos subtotais dos itens.
 - Remover itens atualiza o total.
 - Um pedido finalizado não aceita alterações próprias de um pedido aberto.
 
-Essas regras orientam o planejamento. Não indicam funcionalidades já entregues: em particular, o modelo `Pedido` atual ainda não associa mesas, listas de itens, totais ou estado de finalização.
+O modelo contém o status `FINALIZADO`, mas ainda não há operação para alterar o status nem regra que bloqueie alterações após a finalização. Os dados continuam apenas em memória.
