@@ -1,40 +1,54 @@
 # Arquitetura atual
 
-O projeto é uma aplicação Java modular empacotada pelo Maven. Há duas entradas independentes no código: o plugin JavaFX inicia `HelloApplication`; `console.Main` oferece um menu de texto para operações de produtos e mesas. A interface JavaFX ainda é uma tela de exemplo e não usa o domínio do restaurante.
+O projeto é uma aplicação Java modular, com um único `pom.xml` e o Maven Wrapper do repositório principal. O plugin JavaFX continua iniciando `HelloApplication`, agora com a interface de atendimento incorporada do repositório `Teste-JavaFX`. `console.Main` mantém o menu de texto existente.
 
 ## Pacotes Java
 
-| Pacote | Responsabilidade atual |
+O prefixo dos pacotes abaixo é `com.senai.nucitalanches.nucitalanches`.
+
+| Pacote | Responsabilidade |
 | --- | --- |
-| `...domain` | Modelos `Produto`, `Mesa`, `Pedido`, `ItemPedido` e o enum `StatusPedido`. |
-| `...application` | `Restaurante`, operações para produtos, mesas e pedidos; cria pedido para mesa cadastrada e adiciona itens a pedido existente. |
-| `...storage` | `BancoDeDados`, singleton que mantém produtos, mesas e pedidos em coleções em memória. Os itens pertencem ao pedido; não há persistência em disco ou banco externo. |
-| `...console` | `Main`, menu de texto para cadastro/listagem de produtos e cadastro/consulta/listagem de mesas. O menu ainda não oferece operações de pedido. |
-| `com.senai.nucitalanches.nucitalanches` | Inicialização e controller JavaFX. O FXML permanece em `src/main/resources` no caminho correspondente ao pacote. |
+| `domain` | Modelos originais `Produto`, `Mesa`, `Pedido`, `ItemPedido` e `StatusPedido`. |
+| `application` | Classe original `Restaurante`, com cadastro/listagem de produtos e mesas, criação de pedido e inclusão de itens. |
+| `storage` | Classe original `BancoDeDados`, singleton com produtos, mesas e pedidos em memória. |
+| `console` | Menu original de cadastro/listagem de produtos e cadastro/consulta/listagem de mesas. |
+| `ui` | `MenuController` e `UiIcons`: apresentação JavaFX e adaptação dos campos para chamadas às operações existentes. |
+| Pacote base | `HelloApplication`, `Launcher` e o controller do exemplo original. |
 
-O prefixo completo dos quatro primeiros pacotes é `com.senai.nucitalanches.nucitalanches`.
+## Fluxo da interface
 
-## Estado do domínio
+`HelloApplication` carrega `view/cardapio.fxml`. O FXML usa `ui.MenuController`, com acesso reflexivo autorizado em `module-info.java` exclusivamente para `javafx.fxml`.
 
-`Produto` valida nome não nulo/não vazio e preço finito não negativo. `Mesa` é apenas um número; a validação de número positivo e unicidade ocorre no armazenamento durante o cadastro. Os métodos do menu exibem mensagens de sucesso/erro conforme esse resultado.
+O controller mantém apenas o estado da apresentação: texto de busca, mesa selecionada para o próximo pedido e pedido exibido. Os registros são obtidos e alterados pelas classes originais.
 
-`Pedido` contém número, mesa, lista de itens e status. É criado para uma mesa cadastrada por meio de `Restaurante`, começa como `ABERTO` e pode receber vários itens. `getItens()` devolve uma cópia somente para leitura. `ItemPedido` exige produto não nulo e quantidade positiva, inclusive quando esses valores são alterados pelos setters.
+- Produtos: `Restaurante.cadastroProduto` e `listarProdutos`.
+- Mesas: `Restaurante.cadastrarMesa`, `consultarMesaPorNumero` e `listarMesas`.
+- Pedidos: `Restaurante.criarPedido` e `adicionarItemAoPedido`.
+- Consultas: `BancoDeDados.listarPedidos`, `Pedido.getItens` e os getters dos modelos.
 
-O enum `StatusPedido` define `ABERTO` e `FINALIZADO`, mas a transição entre estados ainda não está implementada. Também não há subtotal, total, remoção de item ou bloqueio de alterações após finalização. O menu de console e a tela JavaFX não oferecem o fluxo de pedidos; as operações estão disponíveis na camada `Restaurante`.
+Não há segunda cópia de `Restaurante`, dos modelos ou de `BancoDeDados`, nem dependência de rede entre os dois repositórios. As classes de negócio do principal são usadas diretamente.
 
-## Caminhos relevantes
+## Regras preservadas
 
-```text
-src/main/java/module-info.java
-src/main/java/com/senai/nucitalanches/nucitalanches/
-├── application/Restaurante.java
-├── console/Main.java
-├── domain/{Produto,Mesa,Pedido,ItemPedido,StatusPedido}.java
-├── storage/BancoDeDados.java
-├── HelloApplication.java
-├── HelloController.java
-└── Launcher.java
-src/main/resources/com/senai/nucitalanches/nucitalanches/hello-view.fxml
-```
+`Produto` valida nome não nulo/não vazio e preço finito não negativo. `Mesa` representa um número; positividade e unicidade são verificadas pelo armazenamento ao cadastrar. A interface converte o texto do campo de preço e mantém a precisão aceita pelo modelo, sem impor duas casas decimais ao cadastro.
 
-Os caminhos de recursos são mantidos separados da organização do domínio. A configuração de execução JavaFX no Maven e as declarações de módulo continuam apontando para o pacote JavaFX existente.
+`Pedido` continua associado a uma mesa cadastrada, começa `ABERTO` e recebe itens por meio das operações existentes. `getItens()` retorna uma cópia somente para leitura. `ItemPedido` exige produto não nulo e quantidade positiva.
+
+O enum inclui `FINALIZADO`, mas a transição ainda não está implementada. Total, subtotal, remoção de itens, bloqueio após finalização e persistência continuam fora das operações atuais.
+
+## Recursos e execução
+
+Os recursos estão sob `src/main/resources/com/senai/nucitalanches/nucitalanches/`:
+
+- `view/cardapio.fxml`: tela de atendimento.
+- `css/javafx-nucita-theme.css`: tema da interface e formulários.
+- `images/logo.png`: imagem da marca usada pela interface.
+- `hello-view.fxml`: exemplo original preservado.
+
+A estrutura modular e os comandos `mvnw javafx:run` / `mvnw test` continuam na raiz. A compilação usa Java 21, compatível com a sintaxe e as APIs da interface incorporada. As versões de JavaFX, JUnit e dos plugins do principal foram mantidas.
+
+## Testes
+
+Os 13 testes originais de domínio/aplicação permanecem intactos. `ui.MenuControllerIntegrationTest` abre `HelloApplication`, usa os botões e formulários reais e verifica as alterações nas mesmas coleções de `BancoDeDados`.
+
+O teste da interface cobre cadastros, consultas, duplicidade de mesa, validações de preço/quantidade, criação e seleção de pedidos, associação de mesa e largura dos cartões. As capturas ficam em `target/ui-check/`; dados e capturas de teste não são carregados pelo programa.
