@@ -4,6 +4,7 @@ package com.senai.nucitalanches.nucitalanches.domain;
 public class ItemPedido {
     private Produto produto;
     private Integer quantidade;
+    private final double precoUnitario;
 
     /**
      * Cria um item com produto e quantidade válidos.
@@ -15,6 +16,7 @@ public class ItemPedido {
     public ItemPedido(Produto produto, Integer quantidade) {
         setProduto(produto);
         setQuantidade(quantidade);
+        precoUnitario = produto.getPreco();
     }
 
     /** Retorna o produto deste item. */
@@ -38,6 +40,16 @@ public class ItemPedido {
     /** Retorna a quantidade deste item. */
     public Integer getQuantidade() {
         return quantidade;
+    }
+
+    /** Preço capturado na inclusão; alterações no catálogo não mudam este valor. */
+    public double getPrecoUnitario() {
+        return precoUnitario;
+    }
+
+    /** Calcula o valor do item com o preço da inclusão e a quantidade atual. */
+    public double getSubtotal() {
+        return precoUnitario * quantidade;
     }
 
     /**

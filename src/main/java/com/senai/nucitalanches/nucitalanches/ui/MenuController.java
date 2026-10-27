@@ -26,6 +26,7 @@ public class MenuController {
     @FXML private VBox cartItems, emptyState;
     @FXML private Label emptyLabel, countLabel, tableLabel, statusLabel, orderTitle, nextTableLabel;
     @FXML private Label catalogCountLabel, catalogHintLabel, orderStatusLabel, emptyTitle;
+    @FXML private Label totalLabel;
     @FXML private Button newOrderButton, emptyActionButton, menuNav, productsNav, tablesNav, ordersNav;
     private final Restaurante restaurante = new Restaurante();
     private final NumberFormat currency = NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
@@ -135,12 +136,27 @@ public class MenuController {
             for (ItemPedido item : activeOrder.getItens()) {
                 count += item.getQuantidade();
                 VBox text = new VBox(6, label(item.getProduto().getNome(), "cart-item-name"),
-                        label(money(item.getProduto().getPreco()) + " / un.", "cart-price"));
+                        label(money(item.getPrecoUnitario()) + " / un.", "cart-price"));
                 HBox.setHgrow(text, Priority.ALWAYS);
                 Label avatar = label(initials(item.getProduto().getNome()), "item-avatar");
                 Label quantity = label(item.getQuantidade() + "×", "item-quantity");
                 HBox line = new HBox(10, avatar, text, quantity); line.setAlignment(Pos.CENTER_LEFT);
-                VBox row = new VBox(line);
+                Label subtotal = label(money(item.getSubtotal()), "item-subtotal");
+                subtotal.setId("itemSubtotal-" + item.getProduto().getId());
+                Button edit = new Button("Alterar quantidade");
+                edit.setId("editItem-" + item.getProduto().getId()); edit.getStyleClass().add("item-control");
+                edit.setOnAction(event -> showQuantityDialog(item.getProduto(), item));
+                Button remove = new Button("Remover");
+                remove.setId("removeItem-" + item.getProduto().getId()); remove.getStyleClass().add("item-control");
+                remove.setOnAction(event -> {
+                    try {
+                        restaurante.removerItemDoPedido(activeOrder.getNumeroPedido(), item);
+                        renderOrder(); statusLabel.setText("Item removido do pedido.");
+                    } catch (IllegalArgumentException exception) { statusLabel.setText(exception.getMessage()); }
+                });
+                HBox values = new HBox(label("Subtotal", "cart-price"), spacer(), subtotal);
+                values.setAlignment(Pos.CENTER_LEFT);
+                VBox row = new VBox(8, line, values, new HBox(12, edit, remove));
                 row.getStyleClass().add("order-item"); cartItems.getChildren().add(row);
             }
         }
@@ -151,6 +167,7 @@ public class MenuController {
             empty.getStyleClass().add("order-empty"); cartItems.getChildren().add(empty);
         }
         countLabel.setText(Long.toString(count));
+        totalLabel.setText(money(activeOrder == null ? 0 : activeOrder.getTotal()));
     }
     private <T> Dialog<T> dialog(String title) {
         Dialog<T> dialog = new Dialog<>();
@@ -310,21 +327,30 @@ public class MenuController {
         } catch (IllegalArgumentException exception) { statusLabel.setText(exception.getMessage()); }
     }
     private void showAddItem(Produto produto) {
+        showQuantityDialog(produto, null);
+    }
+    private void showQuantityDialog(Produto produto, ItemPedido editing) {
         if (activeOrder == null) return;
-        Dialog<Void> dialog = dialog("Adicionar item"); dialog.getDialogPane().setId("addItemDialog");
-        ButtonType add = new ButtonType("Adicionar ao pedido", ButtonBar.ButtonData.OK_DONE);
+        Dialog<Void> dialog = dialog(editing == null ? "Adicionar item" : "Alterar quantidade");
+        dialog.getDialogPane().setId(editing == null ? "addItemDialog" : "editItemDialog");
+        ButtonType add = new ButtonType(editing == null ? "Adicionar ao pedido" : "Salvar quantidade", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(add, ButtonType.CANCEL);
-        TextField quantity = new TextField("1"); quantity.setId("itemQuantity");
+        TextField quantity = new TextField(editing == null ? "1" : editing.getQuantidade().toString()); quantity.setId("itemQuantity");
         Label feedback = feedback("itemFeedback");
-        HBox summary = recordRow(label(initials(produto.getNome()), "record-number"), produto.getNome(), "Preço por unidade", label(money(produto.getPreco()), "record-value"));
+        double priceInOrder = activeOrder.getItens().stream()
+                .filter(item -> Objects.equals(item.getProduto().getId(), produto.getId()))
+                .mapToDouble(ItemPedido::getPrecoUnitario).findFirst().orElse(produto.getPreco());
+        HBox summary = recordRow(label(initials(produto.getNome()), "record-number"), produto.getNome(), "Preço por unidade neste pedido", label(money(priceInOrder), "record-value"));
         dialog.getDialogPane().setContent(content(summary,
                 label("Pedido #" + activeOrder.getNumeroPedido() + " · " + mesaName(activeOrder.getMesa()), "form-hint"),
                 field("Quantas unidades vamos servir?", quantity), feedback));
         Button save = (Button) dialog.getDialogPane().lookupButton(add); save.setId("saveItem");
         save.addEventFilter(ActionEvent.ACTION, event -> {
             try {
-                restaurante.adicionarItemAoPedido(activeOrder.getNumeroPedido(), produto, integer(quantity.getText(), "Quantidade"));
-                renderOrder(); statusLabel.setText(produto.getNome() + " adicionado ao pedido #" + activeOrder.getNumeroPedido() + ".");
+                int value = integer(quantity.getText(), "Quantidade");
+                if (editing == null) restaurante.adicionarItemAoPedido(activeOrder.getNumeroPedido(), produto, value);
+                else restaurante.alterarQuantidadeItem(activeOrder.getNumeroPedido(), editing, value);
+                renderOrder(); statusLabel.setText(editing == null ? produto.getNome() + " adicionado ao pedido #" + activeOrder.getNumeroPedido() + "." : "Quantidade atualizada.");
             } catch (IllegalArgumentException exception) { feedback.getStyleClass().remove("feedback-error"); feedback.getStyleClass().add("feedback-error"); feedback.setText(exception.getMessage()); event.consume(); }
         });
         dialog.showAndWait();
@@ -343,7 +369,9 @@ public class MenuController {
             StringBuilder text = new StringBuilder("Pedido #" + pedido.getNumeroPedido() + " • " + mesaName(pedido.getMesa()) + "\nStatus: " + pedido.getStatus() + "\n\n");
             if (pedido.getItens().isEmpty()) text.append("Nenhum item adicionado.");
             for (ItemPedido item : pedido.getItens()) text.append(item.getQuantidade()).append(" × ").append(item.getProduto().getNome())
-                    .append(" • preço unitário: ").append(money(item.getProduto().getPreco())).append('\n');
+                    .append(" • preço unitário: ").append(money(item.getPrecoUnitario()))
+                    .append(" • subtotal: ").append(money(item.getSubtotal())).append('\n');
+            text.append("\nTotal: ").append(money(pedido.getTotal()));
             details.setText(text.toString());
         });
         Button selectButton = (Button) dialog.getDialogPane().lookupButton(select); selectButton.setId("selectOrder");

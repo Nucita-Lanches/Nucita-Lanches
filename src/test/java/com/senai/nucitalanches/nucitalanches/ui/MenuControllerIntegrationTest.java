@@ -111,6 +111,8 @@ class MenuControllerIntegrationTest {
         assertEquals(2, first.getItens().get(0).getQuantidade());
         assertSame(product, first.getItens().get(0).getProduto());
         assertEquals("2", ((Label) root.lookup("#countLabel")).getText());
+        assertTotal(25.0002);
+        product.setPreco(20.0);
         modal("tablesNav", "tablesDialog", pane -> {
             text(pane, "tableNumber").setText("5"); button(pane, "findTable").fire(); button(pane, "selectTable").fire();
         });
@@ -126,8 +128,29 @@ class MenuControllerIntegrationTest {
             snapshot(pane, "pedidos"); button(pane, "selectOrder").fire();
         });
         modal("addProduct-" + product.getId(), "addItemDialog", pane -> button(pane, "saveItem").fire());
-        assertEquals(2, first.getItens().size());
+        assertEquals(1, first.getItens().size(), "O mesmo produto deve ser somado no item existente");
         assertEquals("3", ((Label) root.lookup("#countLabel")).getText());
+        assertEquals(3, first.getItens().get(0).getQuantidade());
+        assertEquals(12.5001, first.getItens().get(0).getPrecoUnitario(), 1e-9);
+        assertTotal(37.5003);
+        modal("editItem-" + product.getId(), "editItemDialog", pane -> {
+            for (String invalid : List.of("0", "-1", "abc", "2147483648")) {
+                text(pane, "itemQuantity").setText(invalid); button(pane, "saveItem").fire();
+                assertEquals(3, first.getItens().get(0).getQuantidade());
+                assertTotal(37.5003);
+                assertTrue(pane.getScene().getWindow().isShowing());
+            }
+            text(pane, "itemQuantity").setText("4"); button(pane, "saveItem").fire();
+        });
+        assertEquals("4", ((Label) root.lookup("#countLabel")).getText());
+        assertTotal(50.0004);
+        button(root, "removeItem-" + product.getId()).fire();
+        assertTrue(first.getItens().isEmpty());
+        assertEquals("0", ((Label) root.lookup("#countLabel")).getText());
+        assertTotal(0);
+        modal("addProduct-" + product.getId(), "addItemDialog", pane -> button(pane, "saveItem").fire());
+        assertEquals(20.0, first.getItens().get(0).getPrecoUnitario(), 1e-9);
+        assertTotal(20.0);
         assertTrue(second.getItens().isEmpty(), "Continuar pedido deve incluir no pedido selecionado");
         assertEquals(ordersBefore + 2, banco.listarPedidos().size());
         button(root, "newOrderButton").fire();
@@ -145,10 +168,10 @@ class MenuControllerIntegrationTest {
         restaurante.cadastroProduto(new Produto("Smash da casa", 22.0));
         restaurante.cadastroProduto(new Produto("Um produto com nome bem longo para conferir a leitura no cardápio", 18.9));
         button(root, "menuNav").fire();
-        verifyCards("cardapio-completo");
+        verifyCards("cardapio-completo", productsBefore + 6);
         stage.getScene().setRoot(new javafx.scene.Group());
         stage.setScene(new Scene(root, 1220, 730)); stage.sizeToScene();
-        verifyCards("janela-compacta");
+        verifyCards("janela-compacta", productsBefore + 6);
         stage.close();
     }
 
@@ -156,10 +179,15 @@ class MenuControllerIntegrationTest {
     private TextField text(Node owner, String id) { return (TextField) owner.lookup("#" + id); }
     private ListView<?> list(Node owner, String id) { return (ListView<?>) owner.lookup("#" + id); }
 
-    private void verifyCards(String name) {
+    private void assertTotal(double expected) {
+        String formatted = java.text.NumberFormat.getCurrencyInstance(java.util.Locale.of("pt", "BR")).format(expected);
+        assertEquals(formatted, ((Label) root.lookup("#totalLabel")).getText());
+    }
+
+    private void verifyCards(String name, int expectedCount) {
         snapshot(root, name);
         TilePane grid = (TilePane) root.lookup("#productGrid");
-        assertEquals(6, grid.getChildren().size());
+        assertEquals(expectedCount, grid.getChildren().size());
         for (Node card : grid.getChildren()) {
             assertTrue(card.getBoundsInParent().getMaxX() <= grid.getWidth() + 1, "Cartão deve caber na largura do cardápio");
             assertTrue(card.getBoundsInParent().getWidth() >= 210, "Cartão deve manter largura legível");
