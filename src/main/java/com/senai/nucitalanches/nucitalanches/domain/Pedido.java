@@ -45,16 +45,53 @@ public class Pedido {
     }
 
     /**
-     * Adiciona um item ao pedido.
+     * Adiciona um item ou soma sua quantidade à do mesmo produto, mantendo o preço original.
      *
      * @param item item a ser adicionado
+     * @return item incluído ou item existente cuja quantidade foi somada
      * @throws IllegalArgumentException se o item for nulo
      */
-    public void adicionarItem(ItemPedido item) {
+    public ItemPedido adicionarItem(ItemPedido item) {
         if (item == null) {
             throw new IllegalArgumentException("Item do pedido não pode ser nulo.");
         }
+        for (ItemPedido existente : itens) {
+            Produto produto = existente.getProduto();
+            Produto recebido = item.getProduto();
+            if (produto == recebido || (produto.getId() != null && produto.getId().equals(recebido.getId()))) {
+                try {
+                    existente.setQuantidade(Math.addExact(existente.getQuantidade(), item.getQuantidade()));
+                } catch (ArithmeticException exception) {
+                    throw new IllegalArgumentException("Quantidade total ultrapassa o limite permitido.");
+                }
+                return existente;
+            }
+        }
         itens.add(item);
+        return item;
+    }
+
+    /** Atualiza a quantidade de um item que pertence a este pedido. */
+    public void alterarQuantidadeItem(ItemPedido item, Integer quantidade) {
+        validarItemDoPedido(item);
+        item.setQuantidade(quantidade);
+    }
+
+    /** Remove um item deste pedido; o total é recalculado na próxima consulta. */
+    public void removerItem(ItemPedido item) {
+        validarItemDoPedido(item);
+        itens.remove(item);
+    }
+
+    private void validarItemDoPedido(ItemPedido item) {
+        if (item == null || !itens.contains(item)) {
+            throw new IllegalArgumentException("Item não pertence ao pedido.");
+        }
+    }
+
+    /** Soma os subtotais atuais, sem manter um total em cache. */
+    public double getTotal() {
+        return itens.stream().mapToDouble(ItemPedido::getSubtotal).sum();
     }
 
     /** Retorna o estado atual do pedido. */

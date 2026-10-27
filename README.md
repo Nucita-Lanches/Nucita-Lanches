@@ -15,12 +15,13 @@ A interface utiliza as operações existentes de cadastro de produtos e mesas, c
 | Produtos | Cadastrar nome e preço e listar produtos. Na interface, a listagem pode ser filtrada por nome. |
 | Mesas | Cadastrar um número positivo e único, consultar pelo número, listar e selecionar para atendimento. |
 | Pedidos | Criar pedido para uma mesa cadastrada, com número atribuído pelo armazenamento e status inicial `ABERTO`. |
-| Itens | Adicionar produto e quantidade positiva a um pedido existente e consultar os itens. |
+| Itens | Adicionar produtos cadastrados, somar quantidades do mesmo produto, alterar quantidade e remover itens. |
+| Valores | Guardar o preço da inclusão, calcular subtotal por item e total atualizado do pedido, usando `double`. |
 | Atendimento | Consultar os pedidos, selecionar um para continuar a inclusão de itens e manter vários pedidos para a mesma mesa. |
 
-A camada JavaFX chama as classes existentes de `application`, `domain` e `storage`. As regras de negócio e o armazenamento do principal foram preservados na integração.
+A camada JavaFX chama as classes de `application`, `domain` e `storage`. A [Issue 04](docs/ISSUE-04.md) acrescenta as operações de valores, alteração de quantidade e remoção, com as decisões aprovadas para o projeto. O armazenamento continua em memória.
 
-**Ainda planejado:** subtotal e total do pedido, remoção de itens, finalização com bloqueio de alterações e persistência após fechar. O modelo possui o estado `FINALIZADO`, mas a operação de finalização ainda não existe.
+**Ainda planejado:** finalização com bloqueio de alterações e persistência após fechar. O modelo possui o estado `FINALIZADO`, mas a operação de finalização ainda não existe.
 
 ## Requisitos
 
@@ -59,7 +60,9 @@ O comando mantém a entrada `HelloApplication` e abre a interface de atendimento
 4. No cardápio, clique em **Adicionar**, informe a quantidade e confirme.
 5. Abra **Pedidos** e escolha **Continuar pedido** para incluir itens em um pedido já criado.
 
-O campo de preço aceita ponto ou vírgula como separador decimal e entrega o valor ao modelo original `Produto`, que valida nome e preço. Não há regra adicional de duas casas decimais no cadastro; a exibição monetária é apenas uma formatação da tela. Cada inclusão gera um item, conforme o comportamento existente.
+O campo de preço aceita ponto ou vírgula como separador decimal e entrega o valor ao modelo `Produto`, que valida nome e preço. Não há regra adicional de duas casas decimais no cadastro; a exibição monetária é apenas uma formatação da tela.
+
+Adicionar novamente o mesmo produto soma sua quantidade em um único item e mantém o preço guardado na primeira inclusão. No painel existente, use **Alterar quantidade** ou **Remover**; subtotal e total são atualizados. Todos os produtos cadastrados estão disponíveis, e produtos inexistentes são rejeitados.
 
 Ao fechar o programa, os produtos, mesas e pedidos da sessão são apagados, como no armazenamento original.
 
@@ -79,9 +82,9 @@ Compilar e empacotar:
 
 No Linux ou macOS, use `bash ./mvnw` no lugar de `.\mvnw.cmd`.
 
-A validação da integração em **27/10/2026** cobre **14 testes**: os 13 testes originais de domínio/aplicação e um teste de integração que abre a aplicação oficial, usa os formulários JavaFX e verifica o vínculo entre mesas, pedidos e itens. Também são conferidos a precisão de preço aceita pelo domínio e o layout em janela de 1220 × 730.
+A validação da Issue 04 em **27/10/2026** cobre **30 testes**: 29 testes de domínio/aplicação e um teste de integração que abre a aplicação oficial e usa os formulários JavaFX. São verificados subtotal, total, produto repetido, preço da inclusão, alteração, remoção, rejeições sem modificar o pedido e layout em janela de 1220 × 730.
 
-O teste JavaFX exige sessão gráfica. Para executar somente os testes originais em ambiente sem tela:
+O teste JavaFX exige sessão gráfica. Para executar os testes de domínio/aplicação em ambiente sem tela:
 
 ```powershell
 .\mvnw.cmd "-Dtest=RestaurantePedidoTest,PedidoTest,ItemPedidoTest" test

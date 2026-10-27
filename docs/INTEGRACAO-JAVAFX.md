@@ -1,5 +1,7 @@
 # Integração da interface JavaFX
 
+Este documento registra a integração inicial (PR #19). As operações implementadas depois dela para cálculo de valores e manutenção dos itens estão descritas em [`ISSUE-04.md`](ISSUE-04.md).
+
 ## Origem e destino
 
 - Base: `Nucita-Lanches/Nucita-Lanches`, commit `f30e1d1c86a10699b87a8db29fc2b1498f81faf6` da `main`.
@@ -10,7 +12,7 @@ Foram incorporados o controller da interface, os ícones vetoriais, o FXML, o CS
 
 ## Uma única implementação das regras
 
-Os arquivos existentes em `application/`, `domain/`, `storage/` e `console/` foram preservados. Os testes originais também foram mantidos.
+Na integração inicial, os arquivos existentes em `application/`, `domain/`, `storage/` e `console/` foram preservados. Os testes originais também foram mantidos nessa etapa.
 
 A integração não traz as cópias de classes de negócio que existiam no projeto JavaFX. O controller usa diretamente os objetos e métodos do principal. Não foram incluídas operações de exclusão, edição, autenticação, pagamento, finalização ou persistência que não existam no principal.
 

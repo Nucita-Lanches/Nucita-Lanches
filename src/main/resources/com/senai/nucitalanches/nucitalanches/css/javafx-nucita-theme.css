@@ -160,3 +160,8 @@
 .feedback-error { -fx-text-fill: #A14350; }
 .dialog-header { -fx-padding: 23 26 0; }
 .management-dialog > .dialog-content { -fx-padding: 22 26; }
+.order-total-caption { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #735149; }
+.order-total-value { -fx-font-size: 21px; -fx-font-weight: bold; -fx-text-fill: #7D2945; }
+.item-subtotal { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #7D2945; }
+.item-control { -fx-background-color: transparent; -fx-text-fill: #8B3C52; -fx-padding: 3 0; -fx-font-size: 10px; }
+.item-control:hover { -fx-text-fill: #B24F6C; -fx-underline: true; }

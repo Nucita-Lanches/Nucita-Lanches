@@ -58,10 +58,10 @@ public class Restaurante {
      * Adiciona ao pedido um produto com quantidade válida.
      *
      * @param numeroPedido número do pedido existente
-     * @param produto produto do item
+     * @param produto produto cadastrado; a identificação consulta o catálogo
      * @param quantidade quantidade do produto
      * @return item adicionado ao pedido
-     * @throws IllegalArgumentException se o pedido não existir ou os dados do item forem inválidos
+     * @throws IllegalArgumentException se pedido/produto não existir ou os dados do item forem inválidos
      */
     public ItemPedido adicionarItemAoPedido(Integer numeroPedido, Produto produto, Integer quantidade) {
         Pedido pedido = BancoDeDados.getInstancia().buscarPedidoPorNumero(numeroPedido);
@@ -69,8 +69,29 @@ public class Restaurante {
             throw new IllegalArgumentException("Pedido não encontrado.");
         }
 
-        ItemPedido item = new ItemPedido(produto, quantidade);
-        pedido.adicionarItem(item);
-        return item;
+        Produto cadastrado = produto == null ? null : BancoDeDados.getInstancia().buscarProdutoPorId(produto.getId());
+        if (cadastrado == null) {
+            throw new IllegalArgumentException("Produto não cadastrado.");
+        }
+
+        return pedido.adicionarItem(new ItemPedido(cadastrado, quantidade));
+    }
+
+    /** Altera a quantidade de um item do pedido informado, mantendo o preço de inclusão. */
+    public void alterarQuantidadeItem(Integer numeroPedido, ItemPedido item, Integer quantidade) {
+        buscarPedido(numeroPedido).alterarQuantidadeItem(item, quantidade);
+    }
+
+    /** Remove um item pertencente ao pedido informado. */
+    public void removerItemDoPedido(Integer numeroPedido, ItemPedido item) {
+        buscarPedido(numeroPedido).removerItem(item);
+    }
+
+    private Pedido buscarPedido(Integer numeroPedido) {
+        Pedido pedido = BancoDeDados.getInstancia().buscarPedidoPorNumero(numeroPedido);
+        if (pedido == null) {
+            throw new IllegalArgumentException("Pedido não encontrado.");
+        }
+        return pedido;
     }
 }

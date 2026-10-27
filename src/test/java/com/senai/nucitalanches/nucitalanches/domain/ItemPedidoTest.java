@@ -10,6 +10,30 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ItemPedidoTest {
 
     @Test
+    void calculaSubtotalComDoubleEQuantidadeAtual() {
+        ItemPedido item = new ItemPedido(new Produto("Suco", 5.5), 2);
+        assertEquals(5.5, item.getPrecoUnitario(), 1e-9);
+        assertEquals(11.0, item.getSubtotal(), 1e-9);
+        item.setQuantidade(3);
+        assertEquals(16.5, item.getSubtotal(), 1e-9);
+    }
+
+    @Test
+    void guardaPrecoDaInclusaoMesmoQuandoCatalogoMuda() {
+        Produto produto = new Produto("Suco", 5.5);
+        ItemPedido item = new ItemPedido(produto, 2);
+        produto.setPreco(9.0);
+        assertEquals(5.5, item.getPrecoUnitario(), 1e-9);
+        assertEquals(11.0, item.getSubtotal(), 1e-9);
+    }
+
+    @Test
+    void aceitaPrecoZeroEPrecisaoOriginalDoProduto() {
+        assertEquals(0.0, new ItemPedido(new Produto("Cortesia", 0), 3).getSubtotal(), 1e-9);
+        assertEquals(37.5003, new ItemPedido(new Produto("Suco", 12.5001), 3).getSubtotal(), 1e-9);
+    }
+
+    @Test
     void criaItemComProdutoEQuantidadeValidos() {
         Produto produto = new Produto("Suco", 5.5);
 
