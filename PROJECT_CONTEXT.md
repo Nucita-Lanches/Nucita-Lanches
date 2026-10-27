@@ -11,11 +11,14 @@ Nucita Lanches é um projeto de sistema para apoiar o atendimento de uma lanchon
 
 ## Implementado
 
+- Cadastrar e listar produtos com nome e preço, usando as validações de `Produto`.
 - Cadastrar mesas com número positivo e único.
 - Manter vários pedidos associados à mesma mesa cadastrada.
 - Criar pedidos para mesas cadastradas e atribuir número ao pedido.
 - Adicionar ao pedido existente itens com produto não nulo e quantidade positiva.
 - Manter os itens dentro do pedido e expor uma cópia somente para leitura da lista.
+
+A interface JavaFX utiliza essas mesmas operações para o atendimento, e o menu de console original continua disponível. A integração preserva as classes de negócio e o armazenamento do principal; os detalhes estão em [`docs/INTEGRACAO-JAVAFX.md`](docs/INTEGRACAO-JAVAFX.md).
 
 ## Planejado
 
