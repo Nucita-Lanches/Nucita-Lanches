@@ -9,7 +9,7 @@ O prefixo dos pacotes abaixo é `com.senai.nucitalanches.nucitalanches`.
 | Pacote | Responsabilidade |
 | --- | --- |
 | `domain` | Modelos originais `Produto`, `Mesa`, `Pedido`, `ItemPedido` e `StatusPedido`. |
-| `application` | Classe original `Restaurante`, com cadastro/listagem de produtos e mesas, criação de pedido e inclusão de itens. |
+| `application` | `Restaurante`, com produtos, mesas, criação de pedido, inclusão, alteração de quantidade e remoção de itens. |
 | `storage` | Classe original `BancoDeDados`, singleton com produtos, mesas e pedidos em memória. |
 | `console` | Menu original de cadastro/listagem de produtos e cadastro/consulta/listagem de mesas. |
 | `ui` | `MenuController` e `UiIcons`: apresentação JavaFX e adaptação dos campos para chamadas às operações existentes. |
@@ -24,6 +24,8 @@ O controller mantém apenas o estado da apresentação: texto de busca, mesa sel
 - Produtos: `Restaurante.cadastroProduto` e `listarProdutos`.
 - Mesas: `Restaurante.cadastrarMesa`, `consultarMesaPorNumero` e `listarMesas`.
 - Pedidos: `Restaurante.criarPedido` e `adicionarItemAoPedido`.
+- Alterações: `Restaurante.alterarQuantidadeItem` e `removerItemDoPedido`, verificando que o item pertence ao pedido.
+- Valores: `ItemPedido.getPrecoUnitario`, `getSubtotal` e `Pedido.getTotal`.
 - Consultas: `BancoDeDados.listarPedidos`, `Pedido.getItens` e os getters dos modelos.
 
 Não há segunda cópia de `Restaurante`, dos modelos ou de `BancoDeDados`, nem dependência de rede entre os dois repositórios. As classes de negócio do principal são usadas diretamente.
@@ -34,7 +36,9 @@ Não há segunda cópia de `Restaurante`, dos modelos ou de `BancoDeDados`, nem 
 
 `Pedido` continua associado a uma mesa cadastrada, começa `ABERTO` e recebe itens por meio das operações existentes. `getItens()` retorna uma cópia somente para leitura. `ItemPedido` exige produto não nulo e quantidade positiva.
 
-O enum inclui `FINALIZADO`, mas a transição ainda não está implementada. Total, subtotal, remoção de itens, bloqueio após finalização e persistência continuam fora das operações atuais.
+Na Issue 04, `ItemPedido` passou a guardar o preço da inclusão em um `double` imutável. `getSubtotal()` multiplica esse valor pela quantidade atual. `Pedido.getTotal()` soma os subtotais sem armazenar um total em cache; alterações e remoções refletem na próxima consulta. Produtos repetidos são identificados pelo ID do catálogo e somam quantidade no item existente, mantendo seu preço.
+
+`Restaurante` rejeita produtos não cadastrados e usa o produto do catálogo ao incluir; todos os produtos cadastrados são disponíveis. Quantidades não positivas e itens de outro pedido são rejeitados. O enum inclui `FINALIZADO`, mas a transição, o bloqueio após finalização e a persistência continuam fora das operações atuais.
 
 ## Recursos e execução
 
@@ -49,6 +53,6 @@ A estrutura modular e os comandos `mvnw javafx:run` / `mvnw test` continuam na r
 
 ## Testes
 
-Os 13 testes originais de domínio/aplicação permanecem intactos. `ui.MenuControllerIntegrationTest` abre `HelloApplication`, usa os botões e formulários reais e verifica as alterações nas mesmas coleções de `BancoDeDados`.
+As regressões anteriores foram mantidas e ampliadas para os critérios da Issue 04. O cadastro de produtos foi incluído no preparo dos testes de pedidos, pois produtos inexistentes agora são rejeitados. `ui.MenuControllerIntegrationTest` abre `HelloApplication`, usa os botões e formulários reais e verifica as alterações nas mesmas coleções de `BancoDeDados`.
 
 O teste da interface cobre cadastros, consultas, duplicidade de mesa, validações de preço/quantidade, criação e seleção de pedidos, associação de mesa e largura dos cartões. As capturas ficam em `target/ui-check/`; dados e capturas de teste não são carregados pelo programa.
