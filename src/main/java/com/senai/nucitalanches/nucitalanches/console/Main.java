@@ -41,7 +41,7 @@ public class Main {
                     int numeroMesa = scanner.nextInt();
                     boolean mesaCadastrada = restaurante.cadastrarMesa(new Mesa(numeroMesa));
                     if (mesaCadastrada) {
-                        System.out.println("Mesa cadastrada");
+                        System.out.println("Mesa cadastrada.");
                     } else {
                         System.out.println("Número inválido ou mesa já cadastrada.");
                     }

@@ -19,6 +19,7 @@ public class ItemPedido {
         precoUnitario = produto.getPreco();
     }
 
+
     /** Retorna o produto deste item. */
     public Produto getProduto() {
         return produto;
