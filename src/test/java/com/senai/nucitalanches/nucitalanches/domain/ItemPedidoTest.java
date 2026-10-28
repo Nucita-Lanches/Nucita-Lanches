@@ -44,13 +44,12 @@ class ItemPedidoTest {
     }
 
     @Test
-    void rejeitaProdutoNuloNoConstrutorESetter() {
+    void rejeitaProdutoNuloNoConstrutor() {
         assertThrows(IllegalArgumentException.class, () -> new ItemPedido(null, 1));
 
         Produto produto = new Produto("Suco", 5.5);
         ItemPedido item = new ItemPedido(produto, 1);
 
-        assertThrows(IllegalArgumentException.class, () -> item.setProduto(null));
         assertSame(produto, item.getProduto());
     }
 

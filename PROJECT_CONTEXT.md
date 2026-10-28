@@ -20,12 +20,12 @@ Nucita Lanches é um projeto de sistema para apoiar o atendimento de uma lanchon
 - Somar as quantidades do mesmo produto no pedido, preservando o preço da primeira inclusão.
 - Calcular subtotal (`preço unitário guardado × quantidade`) e total pela soma dos subtotais, com `double`.
 - Alterar quantidade positiva e remover item, atualizando os valores consultados.
+- Finalizar pedidos que contenham itens e impedir novas inclusões, alterações ou remoções.
 - Rejeitar produtos não cadastrados; todos os produtos do catálogo são considerados disponíveis.
 
 A interface JavaFX utiliza essas operações para o atendimento, e o menu de console original continua disponível. A origem da integração está em [`docs/INTEGRACAO-JAVAFX.md`](docs/INTEGRACAO-JAVAFX.md); as regras aprovadas para valores e itens estão em [`docs/ISSUE-04.md`](docs/ISSUE-04.md).
 
-## Planejado
+## Limitações e fora do escopo atual
 
-- Um pedido finalizado não aceita alterações próprias de um pedido aberto.
-
-O modelo contém o status `FINALIZADO`, mas ainda não há operação para alterar o status nem regra que bloqueie alterações após a finalização. Os dados continuam apenas em memória.
+- Os dados continuam apenas em memória e são apagados ao encerrar a aplicação.
+- A issue [#21](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/21) propõe imagens para produtos, mas ainda não possui descrição ou critérios de aceitação.

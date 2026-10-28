@@ -14,6 +14,9 @@ public class Restaurante {
 
     /** Cadastra um produto e atribui seu identificador. */
     public void cadastroProduto(Produto produto) {
+        if (produto == null) {
+            throw new IllegalArgumentException("Produto não pode ser nulo.");
+        }
         BancoDeDados.getInstancia().salvarProduto(produto);
     }
 
@@ -85,6 +88,11 @@ public class Restaurante {
     /** Remove um item pertencente ao pedido informado. */
     public void removerItemDoPedido(Integer numeroPedido, ItemPedido item) {
         buscarPedido(numeroPedido).removerItem(item);
+    }
+
+    /** Finaliza um pedido existente que contenha itens. */
+    public void finalizarPedido(Integer numeroPedido) {
+        buscarPedido(numeroPedido).finalizar();
     }
 
     private Pedido buscarPedido(Integer numeroPedido) {

@@ -161,6 +161,21 @@ class MenuControllerIntegrationTest {
             list.getSelectionModel().select(first); button(pane, "selectOrder").fire();
         });
         snapshot(root, "atendimento");
+        double totalBeforeFinalization = first.getTotal();
+        button(root, "finalizeOrderButton").fire();
+        assertEquals(StatusPedido.FINALIZADO, first.getStatus());
+        assertTrue(button(root, "finalizeOrderButton").isDisabled());
+        assertTrue(button(root, "editItem-" + product.getId()).isDisabled());
+        assertTrue(button(root, "removeItem-" + product.getId()).isDisabled());
+        assertEquals(totalBeforeFinalization, first.getTotal(), 1e-9);
+        modal("ordersNav", "ordersDialog", pane -> {
+            @SuppressWarnings("unchecked") ListView<Pedido> list = (ListView<Pedido>) (ListView<?>) list(pane, "ordersList");
+            list.getSelectionModel().select(second);
+            button(pane, "selectOrder").fire();
+        });
+        button(root, "finalizeOrderButton").fire();
+        assertEquals(StatusPedido.ABERTO, second.getStatus());
+        assertTrue(((Label) root.lookup("#statusLabel")).getText().contains("Pedido sem itens"));
         Restaurante restaurante = new Restaurante();
         restaurante.cadastroProduto(new Produto("Brownie da casa", 8.0));
         restaurante.cadastroProduto(new Produto("Milk-shake Nucita", 14.0));

@@ -14,14 +14,14 @@ A interface utiliza as operações existentes de cadastro de produtos e mesas, c
 | --- | --- |
 | Produtos | Cadastrar nome e preço e listar produtos. Na interface, a listagem pode ser filtrada por nome. |
 | Mesas | Cadastrar um número positivo e único, consultar pelo número, listar e selecionar para atendimento. |
-| Pedidos | Criar pedido para uma mesa cadastrada, com número atribuído pelo armazenamento e status inicial `ABERTO`. |
-| Itens | Adicionar produtos cadastrados, somar quantidades do mesmo produto, alterar quantidade e remover itens. |
+| Pedidos | Criar pedido para mesa cadastrada, consultar e finalizar pedidos com itens. Pedidos finalizados não aceitam alterações. |
+| Itens | Adicionar produtos cadastrados, somar quantidades do mesmo produto, alterar quantidade e remover itens enquanto o pedido estiver aberto. |
 | Valores | Guardar o preço da inclusão, calcular subtotal por item e total atualizado do pedido, usando `double`. |
-| Atendimento | Consultar os pedidos, selecionar um para continuar a inclusão de itens e manter vários pedidos para a mesma mesa. |
+| Atendimento | Consultar pedidos, continuar os que estão abertos e manter vários pedidos para a mesma mesa. |
 
 A camada JavaFX chama as classes de `application`, `domain` e `storage`. A [Issue 04](docs/ISSUE-04.md) acrescenta as operações de valores, alteração de quantidade e remoção, com as decisões aprovadas para o projeto. O armazenamento continua em memória.
 
-**Ainda planejado:** finalização com bloqueio de alterações e persistência após fechar. O modelo possui o estado `FINALIZADO`, mas a operação de finalização ainda não existe.
+**Limitações atuais:** os dados permanecem apenas em memória e são apagados ao fechar o aplicativo. A inclusão de imagens dos produtos está descrita na [issue #21](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/21), ainda sem critérios detalhados.
 
 ## Requisitos
 
@@ -34,7 +34,7 @@ As dependências do principal foram mantidas: JavaFX 21.0.6 e JUnit 5.12.1. O co
 
 ## Executar
 
-Clone este repositório e entre na pasta que contém `pom.xml`. Se estiver consultando esta integração antes do merge, selecione a branch `feat/unificar-javafx-java`.
+Clone este repositório e entre na pasta que contém `pom.xml`.
 
 No Windows PowerShell:
 
@@ -59,6 +59,7 @@ O comando mantém a entrada `HelloApplication` e abre a interface de atendimento
 3. Clique em **Novo pedido** para criar o atendimento vinculado à mesa.
 4. No cardápio, clique em **Adicionar**, informe a quantidade e confirme.
 5. Abra **Pedidos** e escolha **Continuar pedido** para incluir itens em um pedido já criado.
+6. Com um pedido aberto e com itens, use **Finalizar pedido** no painel de atendimento. O sistema bloqueia novas inclusões, alterações e remoções.
 
 O campo de preço aceita ponto ou vírgula como separador decimal e entrega o valor ao modelo `Produto`, que valida nome e preço. Não há regra adicional de duas casas decimais no cadastro; a exibição monetária é apenas uma formatação da tela.
 
@@ -82,7 +83,7 @@ Compilar e empacotar:
 
 No Linux ou macOS, use `bash ./mvnw` no lugar de `.\mvnw.cmd`.
 
-A validação da Issue 04 em **27/10/2026** cobre **30 testes**: 29 testes de domínio/aplicação e um teste de integração que abre a aplicação oficial e usa os formulários JavaFX. São verificados subtotal, total, produto repetido, preço da inclusão, alteração, remoção, rejeições sem modificar o pedido e layout em janela de 1220 × 730.
+A suíte Maven cobre **38 testes**: 37 testes de domínio/aplicação e um teste de integração que abre a aplicação e usa os formulários JavaFX. São verificados cadastros, validações, criação e manutenção de pedidos, cálculos, finalização, bloqueio de alterações e layout da interface.
 
 O teste JavaFX exige sessão gráfica. Para executar os testes de domínio/aplicação em ambiente sem tela:
 
@@ -120,4 +121,4 @@ A interface veio de [Nucita-Lanches/Teste-JavaFX](https://github.com/Nucita-Lanc
 
 Crie uma branch própria a partir de `main`, faça alterações relacionadas a uma tarefa e abra um Pull Request para revisão, conforme [`CONTRIBUTING.md`](CONTRIBUTING.md) e [`DEVELOPMENT_PIPELINE.md`](DEVELOPMENT_PIPELINE.md).
 
-Documentação: [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md), [`docs/INTEGRACAO-JAVAFX.md`](docs/INTEGRACAO-JAVAFX.md) e [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md).
+Documentação: [diagrama do modelo](Nucita-Lanches-modelagem-completa.drawio), [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md), [`docs/INTEGRACAO-JAVAFX.md`](docs/INTEGRACAO-JAVAFX.md), [`docs/ISSUE-04.md`](docs/ISSUE-04.md) e [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md). As issues relacionadas a validações, finalização, testes e documentação são [#7](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/7), [#8](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/8), [#9](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/9) e [#10](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/10); o PR que as implementa é [#22](https://github.com/Nucita-Lanches/Nucita-Lanches/pull/22).
