@@ -5,6 +5,7 @@ public class Produto {
     private Long id;
     private String nome;
     private double preco;
+    private String imagemUrl;
 
     /**
      * Cria um produto com nome e preço válidos.
@@ -14,8 +15,20 @@ public class Produto {
      * @throws IllegalArgumentException se o nome for nulo/vazio ou o preço for negativo/não finito
      */
     public Produto(String nome, double preco) {
+        this(nome, preco, null);
+    }
+
+    /**
+     * Cria um produto com nome, preço e URL/caminho de imagem.
+     *
+     * @param nome nome do produto
+     * @param preco preço do produto
+     * @param imagemUrl URI ou caminho da imagem do produto (opcional)
+     */
+    public Produto(String nome, double preco, String imagemUrl) {
         setNome(nome);
         setPreco(preco);
+        setImagemUrl(imagemUrl);
     }
 
     /** Retorna o identificador atribuído ao produto. */
@@ -50,6 +63,21 @@ public class Produto {
         this.preco = preco;
     }
 
+    /** Retorna a URL/URI da imagem associada ao produto, ou {@code null} se não houver. */
+    public String getImagemUrl() {
+        return imagemUrl;
+    }
+
+    /** Define a URL/URI da imagem do produto (valores vazios são convertidos para {@code null}). */
+    public void setImagemUrl(String imagemUrl) {
+        this.imagemUrl = (imagemUrl == null || imagemUrl.trim().isEmpty()) ? null : imagemUrl.trim();
+    }
+
+    /** Indica se o produto possui uma imagem cadastrada. */
+    public boolean possuiImagem() {
+        return imagemUrl != null && !imagemUrl.isEmpty();
+    }
+
     private static void validarNome(String nome) {
         if (nome == null || nome.trim().isEmpty()) {
             throw new IllegalArgumentException("Nome do produto não pode ser vazio ou nulo.");
@@ -68,6 +96,7 @@ public class Produto {
                 "id=" + id +
                 ", nome='" + nome + '\'' +
                 ", preco=" + preco +
+                ", imagemUrl='" + imagemUrl + '\'' +
                 '}';
     }
 }
