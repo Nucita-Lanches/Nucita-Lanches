@@ -3,19 +3,27 @@ package com.senai.nucitalanches.nucitalanches.ui;
 import com.senai.nucitalanches.nucitalanches.application.Restaurante;
 import com.senai.nucitalanches.nucitalanches.domain.*;
 import com.senai.nucitalanches.nucitalanches.storage.BancoDeDados;
-import javafx.event.ActionEvent;
 import javafx.css.PseudoClass;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
+
+import java.io.File;
 import java.text.Normalizer;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 /** Liga a interface às operações já implementadas no projeto Nucita Lanches. */
@@ -47,25 +55,98 @@ public class MenuController {
         renderOrder();
         statusLabel.setText("Cadastre produtos e mesas para começar o atendimento.");
     }
+
     private Label label(String text, String style) {
         Label result = new Label(text);
         result.getStyleClass().add(style);
         result.setWrapText(true);
         return result;
     }
+
     private Region spacer() {
         Region region = new Region(); HBox.setHgrow(region, Priority.ALWAYS); return region;
     }
+
     private String money(double price) { return currency.format(price); }
     private String mesaName(Mesa mesa) { return "Mesa " + mesa.getNumero(); }
+
     private String normalize(String text) {
         return Normalizer.normalize(text, Normalizer.Form.NFD).replaceAll("\\p{M}", "").toLowerCase(Locale.ROOT);
     }
+
     private String initials(String name) {
         String[] words = name.trim().split("\\s+");
         String first = Character.toString(words[0].codePointAt(0));
         return (first + (words.length > 1 ? Character.toString(words[words.length - 1].codePointAt(0)) : "")).toUpperCase(Locale.of("pt", "BR"));
     }
+
+    /** Tenta carregar uma imagem a partir de uma URL/URI; retorna {@code null} se for inválida. */
+    private Image loadImage(String url, double width, double height) {
+        if (url == null || url.isBlank()) return null;
+        try {
+            Image img = new Image(url, width, height, true, true, false);
+            return img.isError() ? null : img;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** Cria o topo visual do cartão do produto (com foto se houver, ou monograma padrão). */
+    private StackPane createProductArtwork(Produto produto) {
+        Circle ring = new Circle(43); ring.getStyleClass().add("product-art-ring");
+        Label monogram = label(initials(produto.getNome()), "product-monogram");
+        Label mark = label("NUCITA LANCHES", "product-art-caption");
+        StackPane.setAlignment(mark, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(mark, new Insets(0, 0, 12, 0));
+
+        StackPane imagePane = new StackPane(ring, monogram, mark);
+        imagePane.getStyleClass().add("product-art");
+        int variant = (int) (produto.getId() % 3);
+        if (variant == 1) imagePane.getStyleClass().add("product-art-dark");
+        else if (variant == 2) imagePane.getStyleClass().add("product-art-rose");
+
+        if (produto.possuiImagem()) {
+            Image loaded = loadImage(produto.getImagemUrl(), 440, 280);
+            if (loaded != null) {
+                ImageView imageView = new ImageView(loaded);
+                imageView.setPreserveRatio(false);
+                imageView.setSmooth(true);
+                imageView.fitWidthProperty().bind(imagePane.widthProperty());
+                imageView.fitHeightProperty().bind(imagePane.heightProperty());
+
+                Rectangle clip = new Rectangle();
+                clip.widthProperty().bind(imagePane.widthProperty());
+                clip.heightProperty().bind(imagePane.heightProperty());
+                clip.setArcWidth(24);
+                clip.setArcHeight(24);
+                imageView.setClip(clip);
+
+                imagePane.getChildren().setAll(imageView, mark);
+            }
+        }
+        return imagePane;
+    }
+
+    /** Cria um marcador em miniatura para listas e carrinho, ou usa as iniciais como fallback. */
+    private Node createProductMarker(Produto produto, String fallbackStyle) {
+        if (produto.possuiImagem()) {
+            Image loaded = loadImage(produto.getImagemUrl(), 72, 72);
+            if (loaded != null) {
+                ImageView iv = new ImageView(loaded);
+                iv.setFitWidth(36);
+                iv.setFitHeight(36);
+                iv.setPreserveRatio(false);
+                iv.setClip(new Circle(18, 18, 18));
+                StackPane wrapper = new StackPane(iv);
+                wrapper.setMinSize(36, 36);
+                wrapper.setPrefSize(36, 36);
+                wrapper.setMaxSize(36, 36);
+                return wrapper;
+            }
+        }
+        return label(initials(produto.getNome()), fallbackStyle);
+    }
+
     private void sizeProductCards() {
         double available = productGrid.getWidth();
         if (available <= 0) return;
@@ -76,20 +157,13 @@ public class MenuController {
             card.setMinWidth(width); card.setPrefWidth(width); card.setMaxWidth(width);
         }
     }
+
     private void renderProducts() {
         productGrid.getChildren().clear();
         String query = normalize(searchField.getText().trim());
         for (Produto produto : restaurante.listarProdutos()) {
             if (!normalize(produto.getNome()).contains(query)) continue;
-            Circle ring = new Circle(43); ring.getStyleClass().add("product-art-ring");
-            Label monogram = label(initials(produto.getNome()), "product-monogram");
-            Label mark = label("NUCITA LANCHES", "product-art-caption");
-            StackPane.setAlignment(mark, Pos.BOTTOM_CENTER); StackPane.setMargin(mark, new Insets(0, 0, 12, 0));
-            StackPane image = new StackPane(ring, monogram, mark);
-            image.getStyleClass().add("product-art");
-            int variant = (int) (produto.getId() % 3);
-            if (variant == 1) image.getStyleClass().add("product-art-dark");
-            else if (variant == 2) image.getStyleClass().add("product-art-rose");
+            StackPane image = createProductArtwork(produto);
             Button add = new Button("Adicionar", UiIcons.icon("plus"));
             add.setGraphicTextGap(5);
             add.setId("addProduct-" + produto.getId());
@@ -125,6 +199,7 @@ public class MenuController {
         productGrid.setManaged(!empty);
         sizeProductCards();
     }
+
     private void renderOrder() {
         cartItems.getChildren().clear();
         orderTitle.setText(activeOrder == null ? "Seu pedido" : "Pedido #" + activeOrder.getNumeroPedido());
@@ -142,7 +217,7 @@ public class MenuController {
                 VBox text = new VBox(6, label(item.getProduto().getNome(), "cart-item-name"),
                         label(money(item.getPrecoUnitario()) + " / un.", "cart-price"));
                 HBox.setHgrow(text, Priority.ALWAYS);
-                Label avatar = label(initials(item.getProduto().getNome()), "item-avatar");
+                Node avatar = createProductMarker(item.getProduto(), "item-avatar");
                 Label quantity = label(item.getQuantidade() + "×", "item-quantity");
                 HBox line = new HBox(10, avatar, text, quantity); line.setAlignment(Pos.CENTER_LEFT);
                 Label subtotal = label(money(item.getSubtotal()), "item-subtotal");
@@ -175,6 +250,7 @@ public class MenuController {
         countLabel.setText(Long.toString(count));
         totalLabel.setText(money(activeOrder == null ? 0 : activeOrder.getTotal()));
     }
+
     private <T> Dialog<T> dialog(String title) {
         Dialog<T> dialog = new Dialog<>();
         dialog.setTitle("Nucita Lanches • " + title);
@@ -201,6 +277,7 @@ public class MenuController {
         });
         dialog.setResizable(true); return dialog;
     }
+
     private <T> void configureList(ListView<T> list, Function<T, Node> display) {
         list.setCellFactory(view -> new ListCell<>() {
             @Override protected void updateItem(T item, boolean empty) {
@@ -214,6 +291,7 @@ public class MenuController {
         list.setPrefHeight(315);
         list.setMinHeight(180);
     }
+
     private HBox recordRow(Node marker, String title, String subtitle, Node end) {
         Label name = label(title, "record-name");
         VBox text = new VBox(5, name, label(subtitle, "record-meta"));
@@ -223,16 +301,20 @@ public class MenuController {
         row.setAlignment(Pos.CENTER_LEFT); row.getStyleClass().add("record-row");
         return row;
     }
+
     private VBox content(Node... nodes) {
         VBox box = new VBox(15, nodes); box.getStyleClass().add("dialog-content"); box.setPrefWidth(510); return box;
     }
+
     private VBox form(Node... nodes) {
         VBox box = new VBox(14, nodes); box.getStyleClass().add("form-panel"); box.setMinWidth(280); return box;
     }
+
     private VBox field(String caption, TextField input) {
         Label name = label(caption, "field-label"); name.setLabelFor(input);
         return new VBox(7, name, input);
     }
+
     private HBox splitContent(VBox left, VBox right) {
         left.setPrefWidth(365); left.setMinWidth(300);
         right.setPrefWidth(305);
@@ -241,25 +323,39 @@ public class MenuController {
         box.getStyleClass().add("dialog-content"); box.setPrefWidth(790); box.setAlignment(Pos.TOP_LEFT);
         return box;
     }
+
     private Label feedback(String id) {
         Label feedback = label("", "form-feedback"); feedback.setId(id);
         feedback.visibleProperty().bind(feedback.textProperty().isNotEmpty());
         feedback.managedProperty().bind(feedback.visibleProperty());
         return feedback;
     }
+
     private void action(Label feedback, Runnable operation) {
         feedback.getStyleClass().remove("feedback-error");
         try { operation.run(); }
         catch (IllegalArgumentException exception) { feedback.getStyleClass().add("feedback-error"); feedback.setText(exception.getMessage()); }
     }
+
     private int integer(String value, String field) {
         try { return Integer.parseInt(value.trim()); }
         catch (NumberFormatException exception) { throw new IllegalArgumentException(field + ": informe um número inteiro válido."); }
     }
+
     private double price(String value) {
         try { return Double.parseDouble(value.trim().replace(',', '.')); }
         catch (NumberFormatException exception) { throw new IllegalArgumentException("Informe um preço numérico, sem separador de milhar. Ex.: 12,50."); }
     }
+
+    private File chooseImageFile(Window owner) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Selecionar imagem do produto");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Imagens (PNG, JPG, WEBP, GIF)", "*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif")
+        );
+        return chooser.showOpenDialog(owner);
+    }
+
     @FXML private void showMenu() { searchField.clear(); renderProducts(); }
 
     @FXML private void showProducts() {
@@ -267,27 +363,121 @@ public class MenuController {
         dialog.getDialogPane().setId("productsDialog");
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
         ListView<Produto> list = new ListView<>(); list.setId("productsList");
-        configureList(list, produto -> recordRow(label(initials(produto.getNome()), "record-number"), produto.getNome(),
-                "Produto #" + produto.getId(), label(money(produto.getPreco()), "record-value")));
+        configureList(list, produto -> recordRow(
+                createProductMarker(produto, "record-number"),
+                produto.getNome(),
+                "Produto #" + produto.getId() + (produto.possuiImagem() ? " • Com foto" : ""),
+                label(money(produto.getPreco()), "record-value")));
         list.getItems().setAll(restaurante.listarProdutos()); list.setPlaceholder(new Label("Nenhum produto cadastrado."));
+
         TextField name = new TextField(); name.setId("productName"); name.setPromptText("Nome do produto");
         TextField price = new TextField(); price.setId("productPrice"); price.setPromptText("Ex.: 12,50");
+
+        AtomicReference<String> selectedImageUrl = new AtomicReference<>(null);
+        ImageView preview = new ImageView();
+        preview.setFitWidth(44);
+        preview.setFitHeight(44);
+        preview.setPreserveRatio(false);
+        preview.setClip(new Circle(22, 22, 22));
+
+        StackPane previewHolder = new StackPane(UiIcons.icon("products"));
+        previewHolder.getStyleClass().add("empty-symbol");
+        previewHolder.setMinSize(44, 44);
+        previewHolder.setPrefSize(44, 44);
+        previewHolder.setMaxSize(44, 44);
+
+        Label imageNameLabel = label("Nenhuma imagem selecionada", "form-hint");
+        Button chooseImageBtn = new Button("Escolher imagem...");
+        chooseImageBtn.setId("selectProductImage");
+        chooseImageBtn.getStyleClass().add("secondary-button");
+
+        Button clearImageBtn = new Button("Limpar");
+        clearImageBtn.setId("clearProductImage");
+        clearImageBtn.getStyleClass().add("item-control");
+        clearImageBtn.setVisible(false);
+        clearImageBtn.setManaged(false);
+
+        Runnable resetImageSelection = () -> {
+            selectedImageUrl.set(null);
+            previewHolder.getChildren().setAll(UiIcons.icon("products"));
+            imageNameLabel.setText("Nenhuma imagem selecionada");
+            clearImageBtn.setVisible(false);
+            clearImageBtn.setManaged(false);
+        };
+
+        chooseImageBtn.setOnAction(event -> {
+            File file = chooseImageFile(dialog.getDialogPane().getScene().getWindow());
+            if (file != null) {
+                String uri = file.toURI().toString();
+                Image img = loadImage(uri, 88, 88);
+                if (img != null) {
+                    selectedImageUrl.set(uri);
+                    preview.setImage(img);
+                    previewHolder.getChildren().setAll(preview);
+                    imageNameLabel.setText(file.getName());
+                    clearImageBtn.setVisible(true);
+                    clearImageBtn.setManaged(true);
+                }
+            }
+        });
+        clearImageBtn.setOnAction(event -> resetImageSelection.run());
+
+        HBox imageButtons = new HBox(8, chooseImageBtn, clearImageBtn);
+        imageButtons.setAlignment(Pos.CENTER_LEFT);
+        VBox imageControls = new VBox(5, imageButtons, imageNameLabel);
+        HBox.setHgrow(imageControls, Priority.ALWAYS);
+        HBox imagePickerRow = new HBox(12, previewHolder, imageControls);
+        imagePickerRow.setAlignment(Pos.CENTER_LEFT);
+        VBox imageField = new VBox(7, label("Imagem do produto (opcional)", "field-label"), imagePickerRow);
+
         Label feedback = feedback("productFeedback");
         Button save = new Button("Cadastrar produto"); save.setId("saveProduct"); save.getStyleClass().add("hero-button");
         save.setMaxWidth(Double.MAX_VALUE);
         save.setOnAction(event -> action(feedback, () -> {
-            Produto produto = new Produto(name.getText(), price(price.getText()));
-            restaurante.cadastroProduto(produto); list.getItems().setAll(restaurante.listarProdutos());
-            name.clear(); price.clear(); feedback.setText("Produto cadastrado: " + produto.getNome() + ".");
-            statusLabel.setText("Produto cadastrado no cardápio."); renderProducts(); name.requestFocus();
+            Produto produto = new Produto(name.getText(), price(price.getText()), selectedImageUrl.get());
+            restaurante.cadastroProduto(produto);
+            list.getItems().setAll(restaurante.listarProdutos());
+            name.clear();
+            price.clear();
+            resetImageSelection.run();
+            feedback.setText("Produto cadastrado: " + produto.getNome() + ".");
+            statusLabel.setText("Produto cadastrado no cardápio.");
+            renderProducts();
+            name.requestFocus();
         }));
+
+        Button updateSelectedImageBtn = new Button("Definir imagem no produto selecionado");
+        updateSelectedImageBtn.setId("updateSelectedProductImage");
+        updateSelectedImageBtn.getStyleClass().add("secondary-button");
+        updateSelectedImageBtn.setMaxWidth(Double.MAX_VALUE);
+        updateSelectedImageBtn.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
+        updateSelectedImageBtn.setOnAction(event -> action(feedback, () -> {
+            Produto selecionado = list.getSelectionModel().getSelectedItem();
+            if (selecionado == null) return;
+            File file = chooseImageFile(dialog.getDialogPane().getScene().getWindow());
+            if (file != null) {
+                selecionado.setImagemUrl(file.toURI().toString());
+                list.refresh();
+                renderProducts();
+                renderOrder();
+                feedback.setText("Imagem atualizada para " + selecionado.getNome() + ".");
+                statusLabel.setText("Imagem do produto atualizada.");
+            }
+        }));
+
         VBox catalog = new VBox(10, label("Produtos cadastrados", "panel-heading"), list,
-                label("O cardápio é atualizado assim que você cadastra um produto.", "form-hint"));
+                updateSelectedImageBtn,
+                label("O cardápio é atualizado assim que você cadastra ou altera um produto.", "form-hint"));
         dialog.getDialogPane().setContent(splitContent(catalog, form(label("Adicionar ao cardápio", "panel-heading"),
-                label("Um nome, um preço e mais um motivo para voltar.", "form-hint"), field("Nome do produto", name),
-                field("Preço por unidade · R$", price), label("Use vírgula ou ponto para os centavos.", "form-hint"), feedback, save)));
+                label("Um nome, um preço, uma foto e mais um motivo para voltar.", "form-hint"),
+                field("Nome do produto", name),
+                field("Preço por unidade · R$", price),
+                label("Use vírgula ou ponto para os centavos.", "form-hint"),
+                imageField,
+                feedback, save)));
         dialog.showAndWait();
     }
+
     @FXML private void showTables() {
         Dialog<Mesa> dialog = dialog("Mesas"); dialog.getDialogPane().setId("tablesDialog");
         ButtonType select = new ButtonType("Usar no próximo pedido", ButtonBar.ButtonData.OK_DONE);
@@ -318,13 +508,14 @@ public class MenuController {
         selectButton.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
         dialog.setResultConverter(button -> button == select ? list.getSelectionModel().getSelectedItem() : null);
         dialog.getDialogPane().setContent(splitContent(new VBox(10, label("Escolha uma mesa", "panel-heading"), list,
-                label("Selecione na lista para usar no próximo pedido.", "form-hint")),
+                        label("Selecione na lista para usar no próximo pedido.", "form-hint")),
                 form(label("Organize o atendimento", "panel-heading"), label("Cadastre uma nova mesa ou encontre uma pelo número.", "form-hint"),
                         field("Número da mesa", number), label("Use um número inteiro, positivo e ainda não cadastrado.", "form-hint"), save, find, feedback)));
         dialog.showAndWait().ifPresent(mesa -> {
             selectedMesa = mesa; renderOrder(); statusLabel.setText(mesaName(mesa) + " selecionada para o próximo pedido.");
         });
     }
+
     @FXML private void createOrder() {
         if (selectedMesa == null) return;
         try {
@@ -348,6 +539,7 @@ public class MenuController {
     private void showAddItem(Produto produto) {
         showQuantityDialog(produto, null);
     }
+
     private void showQuantityDialog(Produto produto, ItemPedido editing) {
         if (activeOrder == null || activeOrder.getStatus() != StatusPedido.ABERTO) return;
         Dialog<Void> dialog = dialog(editing == null ? "Adicionar item" : "Alterar quantidade");
@@ -359,7 +551,7 @@ public class MenuController {
         double priceInOrder = activeOrder.getItens().stream()
                 .filter(item -> Objects.equals(item.getProduto().getId(), produto.getId()))
                 .mapToDouble(ItemPedido::getPrecoUnitario).findFirst().orElse(produto.getPreco());
-        HBox summary = recordRow(label(initials(produto.getNome()), "record-number"), produto.getNome(), "Preço por unidade neste pedido", label(money(priceInOrder), "record-value"));
+        HBox summary = recordRow(createProductMarker(produto, "record-number"), produto.getNome(), "Preço por unidade neste pedido", label(money(priceInOrder), "record-value"));
         dialog.getDialogPane().setContent(content(summary,
                 label("Pedido #" + activeOrder.getNumeroPedido() + " · " + mesaName(activeOrder.getMesa()), "form-hint"),
                 field("Quantas unidades vamos servir?", quantity), feedback));
@@ -374,6 +566,7 @@ public class MenuController {
         });
         dialog.showAndWait();
     }
+
     @FXML private void showOrders() {
         Dialog<Pedido> dialog = dialog("Pedidos"); dialog.getDialogPane().setId("ordersDialog");
         ButtonType select = new ButtonType("Selecionar pedido", ButtonBar.ButtonData.OK_DONE);
