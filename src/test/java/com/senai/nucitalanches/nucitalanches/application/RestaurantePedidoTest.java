@@ -4,11 +4,13 @@ import com.senai.nucitalanches.nucitalanches.domain.ItemPedido;
 import com.senai.nucitalanches.nucitalanches.domain.Mesa;
 import com.senai.nucitalanches.nucitalanches.domain.Pedido;
 import com.senai.nucitalanches.nucitalanches.domain.Produto;
+import com.senai.nucitalanches.nucitalanches.domain.StatusPedido;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -99,6 +101,54 @@ class RestaurantePedidoTest {
         ItemPedido item = new ItemPedido(new Produto("Suco", 5.5), 1);
         assertThrows(IllegalArgumentException.class, () -> restaurante.alterarQuantidadeItem(Integer.MAX_VALUE, item, 2));
         assertThrows(IllegalArgumentException.class, () -> restaurante.removerItemDoPedido(Integer.MAX_VALUE, item));
+    }
+
+    @Test
+    void finalizaPedidoComItensEImpedeAlteracoesMantendoTotal() {
+        Pedido pedido = restaurante.criarPedido(cadastrarMesa());
+        Produto produto = cadastrarProduto(5.5);
+        ItemPedido item = restaurante.adicionarItemAoPedido(pedido.getNumeroPedido(), produto, 2);
+        double totalAntesDaFinalizacao = pedido.getTotal();
+
+        restaurante.finalizarPedido(pedido.getNumeroPedido());
+
+        assertEquals(StatusPedido.FINALIZADO, pedido.getStatus());
+        assertThrows(IllegalStateException.class, () -> restaurante.adicionarItemAoPedido(pedido.getNumeroPedido(), produto, 1));
+        assertThrows(IllegalStateException.class, () -> restaurante.alterarQuantidadeItem(pedido.getNumeroPedido(), item, 3));
+        assertThrows(IllegalStateException.class, () -> restaurante.removerItemDoPedido(pedido.getNumeroPedido(), item));
+        assertThrows(IllegalStateException.class, () -> restaurante.finalizarPedido(pedido.getNumeroPedido()));
+        assertEquals(2, item.getQuantidade());
+        assertEquals(totalAntesDaFinalizacao, pedido.getTotal(), 1e-9);
+    }
+
+    @Test
+    void naoFinalizaPedidoVazioNemAlteraSeuEstado() {
+        Pedido pedido = restaurante.criarPedido(cadastrarMesa());
+
+        assertThrows(IllegalArgumentException.class, () -> restaurante.finalizarPedido(pedido.getNumeroPedido()));
+
+        assertEquals(StatusPedido.ABERTO, pedido.getStatus());
+        assertEquals(0.0, pedido.getTotal(), 1e-9);
+    }
+
+    @Test
+    void rejeitaCadastroDeProdutoNuloSemPersistir() {
+        int quantidadeAntes = restaurante.listarProdutos().size();
+
+        assertThrows(IllegalArgumentException.class, () -> restaurante.cadastroProduto(null));
+
+        assertEquals(quantidadeAntes, restaurante.listarProdutos().size());
+    }
+
+    @Test
+    void rejeitaIdentificacaoDeMesaInvalidaSemPersistir() {
+        int quantidadeAntes = restaurante.listarMesas().size();
+
+        assertFalse(restaurante.cadastrarMesa(new Mesa(0)));
+        assertFalse(restaurante.cadastrarMesa(new Mesa(-1)));
+        assertFalse(restaurante.cadastrarMesa(new Mesa(null)));
+
+        assertEquals(quantidadeAntes, restaurante.listarMesas().size());
     }
 
     /** Cria pedido associado à mesa cadastrada e recebe um número do armazenamento. */
