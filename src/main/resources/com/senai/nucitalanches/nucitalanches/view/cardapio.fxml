@@ -93,6 +93,7 @@
         <HBox alignment="CENTER_LEFT" spacing="8"><Label text="Total do pedido" styleClass="order-total-caption"/><Region HBox.hgrow="ALWAYS"/><Label fx:id="totalLabel" text="R$ 0,00" styleClass="order-total-value"/></HBox>
         <Label fx:id="nextTableLabel" text="Selecione uma mesa para criar um pedido." styleClass="next-table" wrapText="true"/>
         <Button fx:id="newOrderButton" text="Novo pedido" styleClass="checkout-button" maxWidth="Infinity" onAction="#createOrder"/>
+        <Button fx:id="finalizeOrderButton" text="Finalizar pedido" styleClass="secondary-button" maxWidth="Infinity" onAction="#finalizeOrder"/>
         <Button text="Consultar pedidos" onAction="#showOrders" styleClass="secondary-button" maxWidth="Infinity"/>
       </VBox>
       <Label text="Os dados desta sessão são apagados ao fechar o aplicativo." styleClass="fine-print" wrapText="true"/>
