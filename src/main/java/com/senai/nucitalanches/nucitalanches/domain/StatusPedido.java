@@ -1,6 +1,6 @@
 package com.senai.nucitalanches.nucitalanches.domain;
 
-/** Estados disponíveis para um pedido. A mudança de estado será tratada na etapa de finalização. */
+/** Estados disponíveis durante o ciclo de vida de um pedido. */
 public enum StatusPedido {
     /** Pedido que ainda pode receber itens. */
     ABERTO,

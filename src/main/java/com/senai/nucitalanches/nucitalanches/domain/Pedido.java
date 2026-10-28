@@ -52,6 +52,7 @@ public class Pedido {
      * @throws IllegalArgumentException se o item for nulo
      */
     public ItemPedido adicionarItem(ItemPedido item) {
+        garantirAberto();
         if (item == null) {
             throw new IllegalArgumentException("Item do pedido não pode ser nulo.");
         }
@@ -73,14 +74,31 @@ public class Pedido {
 
     /** Atualiza a quantidade de um item que pertence a este pedido. */
     public void alterarQuantidadeItem(ItemPedido item, Integer quantidade) {
+        garantirAberto();
         validarItemDoPedido(item);
         item.setQuantidade(quantidade);
     }
 
     /** Remove um item deste pedido; o total é recalculado na próxima consulta. */
     public void removerItem(ItemPedido item) {
+        garantirAberto();
         validarItemDoPedido(item);
         itens.remove(item);
+    }
+
+    /** Finaliza o pedido quando ele contém ao menos um item. */
+    public void finalizar() {
+        garantirAberto();
+        if (itens.isEmpty()) {
+            throw new IllegalArgumentException("Pedido sem itens não pode ser finalizado.");
+        }
+        status = StatusPedido.FINALIZADO;
+    }
+
+    private void garantirAberto() {
+        if (status == StatusPedido.FINALIZADO) {
+            throw new IllegalStateException("Pedido finalizado não pode ser alterado.");
+        }
     }
 
     private void validarItemDoPedido(ItemPedido item) {
