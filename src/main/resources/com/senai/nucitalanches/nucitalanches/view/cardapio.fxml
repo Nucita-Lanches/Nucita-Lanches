@@ -90,7 +90,7 @@
       <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS" styleClass="cart-scroll"><VBox fx:id="cartItems" spacing="12"/></ScrollPane>
       <Label fx:id="statusLabel" text="Prepare o atendimento." wrapText="true" styleClass="status-message"/>
       <VBox spacing="12" styleClass="order-actions">
-        <HBox alignment="CENTER_LEFT" spacing="8"><Label text="Total do pedido" styleClass="order-total-caption"/><Region HBox.hgrow="ALWAYS"/><Label fx:id="totalLabel" text="R$ 0,00" styleClass="order-total-value"/></HBox>
+        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="order-total-box"><Label text="Total do pedido" styleClass="order-total-caption"/><Region HBox.hgrow="ALWAYS"/><Label fx:id="totalLabel" text="R$ 0,00" styleClass="order-total-value"/></HBox>
         <Label fx:id="nextTableLabel" text="Selecione uma mesa para criar um pedido." styleClass="next-table" wrapText="true"/>
         <Button fx:id="newOrderButton" text="Novo pedido" styleClass="checkout-button" maxWidth="Infinity" onAction="#createOrder"/>
         <Button text="Consultar pedidos" onAction="#showOrders" styleClass="secondary-button" maxWidth="Infinity"/>

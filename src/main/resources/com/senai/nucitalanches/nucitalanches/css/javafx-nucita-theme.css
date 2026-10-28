@@ -10,7 +10,7 @@
 }
 .label { -fx-text-fill: #30282A; }
 .button { -fx-cursor: hand; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-insets: 0; }
-.button:disabled { -fx-opacity: 0.42; }
+.button:disabled { -fx-opacity: 0.58; }
 .button:focused { -fx-effect: dropshadow(gaussian, rgba(148,63,84,0.28), 8, 0.15, 0, 0); }
 .tooltip { -fx-background-color: #34262B; -fx-text-fill: #FFF8EE; -fx-font-size: 12px; -fx-padding: 10 13; -fx-background-radius: 8; }
 .sidebar { -fx-background-color: linear-gradient(to bottom, #111010, #1A1316); -fx-padding: 24 17 22; -fx-border-color: #282023; -fx-border-width: 0 1 0 0; }
@@ -89,34 +89,38 @@
 .empty-copy { -fx-text-fill: #826C60; -fx-font-size: 12px; -fx-text-alignment: center; -fx-line-spacing: 3; }
 .bottom-note { -fx-padding: 4 0; }
 .footer-copy { -fx-font-family: "Georgia"; -fx-font-size: 11px; -fx-text-fill: #9A8170; }
-.order-panel { -fx-background-color: #FFFCF7; -fx-padding: 30 23 21; -fx-border-color: #E6DBD0; -fx-border-width: 0 0 0 1; }
+.order-panel { -fx-background-color: #FFFCF7; -fx-padding: 26 22 20; -fx-border-color: #E6DBD0; -fx-border-width: 0 0 0 1; }
 .order-title { -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3A272E; }
 .count-bubble { -fx-background-color: #EFE0E1; -fx-text-fill: #822D47; -fx-background-radius: 20; -fx-min-width: 30; -fx-alignment: center; -fx-padding: 6 10; -fx-font-size: 11px; -fx-font-weight: bold; }
 .table-box { -fx-background-color: #F3EBE2; -fx-border-color: #E6D9CB; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 15; }
 .table-symbol { -fx-background-color: #E6D7CA; -fx-background-radius: 10; }
 .table-icon { -fx-fill: transparent; -fx-stroke: #8F634E; -fx-stroke-width: 1.4; -fx-stroke-line-cap: round; -fx-stroke-line-join: round; }
 .table-name { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #4F3437; }
-.table-action { -fx-background-color: transparent; -fx-border-color: #D5BBAA; -fx-border-radius: 6; -fx-background-radius: 6; -fx-text-fill: #7E4E4B; -fx-font-size: 10px; -fx-padding: 9 7; }
+.table-action { -fx-background-color: transparent; -fx-border-color: #D5BBAA; -fx-border-radius: 6; -fx-background-radius: 6; -fx-text-fill: #7E4E4B; -fx-font-size: 11px; -fx-padding: 9 7; }
 .table-action:hover { -fx-background-color: #E7D9CE; }
-.order-state { -fx-font-size: 9px; -fx-text-fill: #8C786A; }
-.order-state:active { -fx-text-fill: #5D724E; }
+.order-state { -fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #8C786A; -fx-background-color: #F1E9E0; -fx-background-radius: 12; -fx-padding: 5 9; }
+.order-state:active { -fx-text-fill: #4F6842; -fx-background-color: #E8EFDF; }
+.order-panel .tiny-caption { -fx-font-size: 10px; -fx-text-fill: #775E52; }
 .cart-scroll, .cart-scroll > .viewport { -fx-background-color: transparent; -fx-background-insets: 0; -fx-padding: 0; }
-.order-item { -fx-padding: 13 0; -fx-border-color: #E9DED3; -fx-border-width: 0 0 1 0; }
+.order-item { -fx-padding: 11; -fx-background-color: #FBF6F0; -fx-background-radius: 10; -fx-border-color: #E9DED3; -fx-border-radius: 10; }
 .item-avatar { -fx-background-color: #EFE1D1; -fx-text-fill: #845C45; -fx-background-radius: 11; -fx-font-family: "Georgia"; -fx-font-size: 17px; -fx-min-width: 43; -fx-pref-width: 43; -fx-min-height: 46; -fx-alignment: center; }
-.cart-item-name { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #4A3038; }
-.cart-price { -fx-text-fill: #8A5F58; -fx-font-size: 10px; }
-.item-quantity { -fx-background-color: #F2E5E2; -fx-background-radius: 5; -fx-text-fill: #8B3C52; -fx-padding: 4 7; -fx-font-size: 10px; -fx-font-weight: bold; }
+.cart-item-name { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #4A3038; }
+.cart-price { -fx-text-fill: #77564E; -fx-font-size: 11px; }
+.item-quantity { -fx-background-color: #F2E5E2; -fx-background-radius: 5; -fx-text-fill: #8B3C52; -fx-padding: 5 8; -fx-font-size: 11px; -fx-font-weight: bold; }
 .order-empty { -fx-padding: 26 10; -fx-spacing: 13; -fx-alignment: center; }
 .order-empty-title { -fx-font-family: "Georgia"; -fx-font-size: 18px; -fx-text-fill: #765A4F; -fx-text-alignment: center; }
 .order-empty-copy { -fx-text-fill: #9A8273; -fx-font-size: 11px; -fx-text-alignment: center; -fx-line-spacing: 3; }
-.status-message { -fx-font-size: 11px; -fx-text-fill: #84635A; -fx-line-spacing: 2; }
+.status-message { -fx-font-size: 11px; -fx-text-fill: #6F5A50; -fx-line-spacing: 2; -fx-background-color: #F4EDE4; -fx-background-radius: 7; -fx-padding: 8 10; }
+.status-message:success { -fx-text-fill: #46613E; -fx-background-color: #EAF0E4; }
+.status-message:error { -fx-text-fill: #8F3043; -fx-background-color: #F6E6E5; }
 .order-actions { -fx-border-color: #E6D8CB; -fx-border-width: 1 0 0; -fx-padding: 17 0 0; }
-.next-table { -fx-font-size: 11px; -fx-text-fill: #735149; }
+.next-table { -fx-font-size: 12px; -fx-text-fill: #65483F; -fx-font-weight: bold; }
 .checkout-button { -fx-background-color: linear-gradient(to right, #76233E, #94304F); -fx-background-radius: 9; -fx-text-fill: #FFF5E7; -fx-font-size: 12px; -fx-padding: 15 16; -fx-effect: dropshadow(gaussian, rgba(112,29,53,0.14), 12, 0, 0, 4); }
 .checkout-button:hover { -fx-background-color: #A33A57; }
 .checkout-button:pressed { -fx-background-color: #682039; }
+.checkout-button:disabled { -fx-background-color: #B99BA3; -fx-text-fill: #FFF9F1; -fx-effect: none; }
 .checkout-button .ui-icon { -fx-stroke: #FFF5E7; }
-.fine-print { -fx-font-size: 9px; -fx-text-fill: #9A8173; -fx-line-spacing: 2; }
+.fine-print { -fx-font-size: 10px; -fx-text-fill: #765F53; -fx-line-spacing: 2; }
 .separator .line { -fx-border-color: #E8DCD1; -fx-border-width: 1 0 0; }
 .sidebar .separator .line { -fx-border-color: #35282E; }
 .scroll-bar:vertical { -fx-background-color: transparent; -fx-pref-width: 7; }
@@ -148,9 +152,10 @@
 .record-meta { -fx-font-size: 10px; -fx-text-fill: #937567; }
 .record-value { -fx-font-size: 13px; -fx-text-fill: #7E2F47; -fx-font-weight: bold; }
 .record-number { -fx-font-family: "Georgia"; -fx-font-size: 17px; -fx-text-fill: #865945; -fx-background-color: #EDDFD1; -fx-background-radius: 8; -fx-min-width: 46; -fx-min-height: 42; -fx-alignment: center; -fx-padding: 7; }
-.record-state { -fx-font-size: 9px; -fx-text-fill: #62734F; -fx-background-color: #E8EBDF; -fx-background-radius: 5; -fx-padding: 5 7; }
-.management-dialog .text-area { -fx-background-color: transparent; -fx-border-width: 0; -fx-background-insets: 0; -fx-font-size: 12px; -fx-text-fill: #715448; }
-.management-dialog .text-area .content { -fx-background-color: #FFFCF7; -fx-padding: 10 0; }
+.record-state { -fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #62734F; -fx-background-color: #E8EBDF; -fx-background-radius: 9; -fx-padding: 6 9; }
+.record-state-closed { -fx-text-fill: #765C54; -fx-background-color: #EEE7E0; }
+.management-dialog .text-area { -fx-background-color: transparent; -fx-border-width: 0; -fx-background-insets: 0; -fx-font-size: 13px; -fx-text-fill: #59433C; -fx-line-spacing: 2; }
+.management-dialog .text-area .content { -fx-background-color: #FFFCF7; -fx-padding: 12; }
 .management-dialog .button-bar { -fx-background-color: #F0E8DF; -fx-border-color: #E2D3C5; -fx-border-width: 1 0 0; -fx-padding: 14 26; }
 .management-dialog .button-bar .button { -fx-background-color: #FFFDF9; -fx-border-color: #D6C5B8; -fx-border-radius: 7; -fx-background-radius: 7; -fx-padding: 10 18; -fx-text-fill: #79584E; -fx-font-size: 11px; }
 .management-dialog .button-bar .button:default { -fx-background-color: #7E2945; -fx-text-fill: #FFF5E7; -fx-border-color: #7E2945; }
@@ -160,8 +165,9 @@
 .feedback-error { -fx-text-fill: #A14350; }
 .dialog-header { -fx-padding: 23 26 0; }
 .management-dialog > .dialog-content { -fx-padding: 22 26; }
-.order-total-caption { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #735149; }
-.order-total-value { -fx-font-size: 21px; -fx-font-weight: bold; -fx-text-fill: #7D2945; }
+.order-total-box { -fx-background-color: #F5ECE4; -fx-background-radius: 9; -fx-padding: 12 13; }
+.order-total-caption { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #65473F; }
+.order-total-value { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #7D2945; }
 .item-subtotal { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #7D2945; }
-.item-control { -fx-background-color: transparent; -fx-text-fill: #8B3C52; -fx-padding: 3 0; -fx-font-size: 10px; }
+.item-control { -fx-background-color: transparent; -fx-text-fill: #7D2945; -fx-padding: 5 0; -fx-font-size: 11px; }
 .item-control:hover { -fx-text-fill: #B24F6C; -fx-underline: true; }

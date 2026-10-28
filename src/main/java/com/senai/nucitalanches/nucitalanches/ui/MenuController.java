@@ -127,7 +127,8 @@ public class MenuController {
         cartItems.getChildren().clear();
         orderTitle.setText(activeOrder == null ? "Seu pedido" : "Pedido #" + activeOrder.getNumeroPedido());
         tableLabel.setText(activeOrder == null ? "Nenhum pedido aberto" : mesaName(activeOrder.getMesa()));
-        nextTableLabel.setText(selectedMesa == null ? "Selecione uma mesa para criar um pedido." : "Próximo pedido: " + mesaName(selectedMesa));
+        nextTableLabel.setText(activeOrder != null ? "Atendimento atual: " + mesaName(activeOrder.getMesa())
+                : selectedMesa == null ? "Selecione uma mesa para criar um pedido." : "Próximo pedido: " + mesaName(selectedMesa));
         newOrderButton.setDisable(selectedMesa == null);
         orderStatusLabel.setText(activeOrder == null ? "Aguardando" : "Aberto");
         orderStatusLabel.pseudoClassStateChanged(PseudoClass.getPseudoClass("active"), activeOrder != null);
@@ -151,8 +152,8 @@ public class MenuController {
                 remove.setOnAction(event -> {
                     try {
                         restaurante.removerItemDoPedido(activeOrder.getNumeroPedido(), item);
-                        renderOrder(); statusLabel.setText("Item removido do pedido.");
-                    } catch (IllegalArgumentException exception) { statusLabel.setText(exception.getMessage()); }
+                        renderOrder(); showStatus("Item removido do pedido.", false);
+                    } catch (IllegalArgumentException exception) { showStatus(exception.getMessage(), true); }
                 });
                 HBox values = new HBox(label("Subtotal", "cart-price"), spacer(), subtotal);
                 values.setAlignment(Pos.CENTER_LEFT);
@@ -168,6 +169,11 @@ public class MenuController {
         }
         countLabel.setText(Long.toString(count));
         totalLabel.setText(money(activeOrder == null ? 0 : activeOrder.getTotal()));
+    }
+    private void showStatus(String message, boolean error) {
+        statusLabel.setText(message);
+        statusLabel.pseudoClassStateChanged(PseudoClass.getPseudoClass("error"), error);
+        statusLabel.pseudoClassStateChanged(PseudoClass.getPseudoClass("success"), !error);
     }
     private <T> Dialog<T> dialog(String title) {
         Dialog<T> dialog = new Dialog<>();
@@ -273,7 +279,7 @@ public class MenuController {
             Produto produto = new Produto(name.getText(), price(price.getText()));
             restaurante.cadastroProduto(produto); list.getItems().setAll(restaurante.listarProdutos());
             name.clear(); price.clear(); feedback.setText("Produto cadastrado: " + produto.getNome() + ".");
-            statusLabel.setText("Produto cadastrado no cardápio."); renderProducts(); name.requestFocus();
+            showStatus("Produto cadastrado no cardápio.", false); renderProducts(); name.requestFocus();
         }));
         VBox catalog = new VBox(10, label("Produtos cadastrados", "panel-heading"), list,
                 label("O cardápio é atualizado assim que você cadastra um produto.", "form-hint"));
@@ -316,15 +322,15 @@ public class MenuController {
                 form(label("Organize o atendimento", "panel-heading"), label("Cadastre uma nova mesa ou encontre uma pelo número.", "form-hint"),
                         field("Número da mesa", number), label("Use um número inteiro, positivo e ainda não cadastrado.", "form-hint"), save, find, feedback)));
         dialog.showAndWait().ifPresent(mesa -> {
-            selectedMesa = mesa; renderOrder(); statusLabel.setText(mesaName(mesa) + " selecionada para o próximo pedido.");
+            selectedMesa = mesa; renderOrder(); showStatus(mesaName(mesa) + " selecionada para o próximo pedido.", false);
         });
     }
     @FXML private void createOrder() {
         if (selectedMesa == null) return;
         try {
             activeOrder = restaurante.criarPedido(selectedMesa.getNumero()); renderOrder(); renderProducts();
-            statusLabel.setText("Pedido #" + activeOrder.getNumeroPedido() + " aberto. Adicione produtos pelo cardápio.");
-        } catch (IllegalArgumentException exception) { statusLabel.setText(exception.getMessage()); }
+            showStatus("Pedido #" + activeOrder.getNumeroPedido() + " aberto. Adicione produtos pelo cardápio.", false);
+        } catch (IllegalArgumentException exception) { showStatus(exception.getMessage(), true); }
     }
     private void showAddItem(Produto produto) {
         showQuantityDialog(produto, null);
@@ -350,7 +356,7 @@ public class MenuController {
                 int value = integer(quantity.getText(), "Quantidade");
                 if (editing == null) restaurante.adicionarItemAoPedido(activeOrder.getNumeroPedido(), produto, value);
                 else restaurante.alterarQuantidadeItem(activeOrder.getNumeroPedido(), editing, value);
-                renderOrder(); statusLabel.setText(editing == null ? produto.getNome() + " adicionado ao pedido #" + activeOrder.getNumeroPedido() + "." : "Quantidade atualizada.");
+                renderOrder(); showStatus(editing == null ? produto.getNome() + " adicionado ao pedido #" + activeOrder.getNumeroPedido() + "." : "Quantidade atualizada.", false);
             } catch (IllegalArgumentException exception) { feedback.getStyleClass().remove("feedback-error"); feedback.getStyleClass().add("feedback-error"); feedback.setText(exception.getMessage()); event.consume(); }
         });
         dialog.showAndWait();
@@ -360,18 +366,22 @@ public class MenuController {
         ButtonType select = new ButtonType("Continuar pedido", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(select, ButtonType.CANCEL);
         ListView<Pedido> list = new ListView<>(); list.setId("ordersList");
-        configureList(list, pedido -> recordRow(UiIcons.icon("orders"), "Pedido #" + pedido.getNumeroPedido(), mesaName(pedido.getMesa()),
-                label(pedido.getStatus() == StatusPedido.ABERTO ? "Aberto" : "Finalizado", "record-state")));
+        configureList(list, pedido -> {
+            Label state = label(pedido.getStatus() == StatusPedido.ABERTO ? "Aberto" : "Finalizado", "record-state");
+            if (pedido.getStatus() != StatusPedido.ABERTO) state.getStyleClass().add("record-state-closed");
+            return recordRow(UiIcons.icon("orders"), "Pedido #" + pedido.getNumeroPedido(), mesaName(pedido.getMesa()), state);
+        });
         list.getItems().setAll(BancoDeDados.getInstancia().listarPedidos()); list.setPlaceholder(new Label("Nenhum pedido criado nesta sessão."));
         TextArea details = new TextArea(); details.setId("orderDetails"); details.setEditable(false); details.setWrapText(true); details.setPrefRowCount(7);
         list.getSelectionModel().selectedItemProperty().addListener((obs, old, pedido) -> {
             if (pedido == null) { details.clear(); return; }
-            StringBuilder text = new StringBuilder("Pedido #" + pedido.getNumeroPedido() + " • " + mesaName(pedido.getMesa()) + "\nStatus: " + pedido.getStatus() + "\n\n");
-            if (pedido.getItens().isEmpty()) text.append("Nenhum item adicionado.");
+            String status = pedido.getStatus() == StatusPedido.ABERTO ? "Aberto" : "Finalizado";
+            StringBuilder text = new StringBuilder("PEDIDO #" + pedido.getNumeroPedido() + "\n" + mesaName(pedido.getMesa()) + " • " + status + "\n\nITENS\n");
+            if (pedido.getItens().isEmpty()) text.append("Nenhum item adicionado.\n");
             for (ItemPedido item : pedido.getItens()) text.append(item.getQuantidade()).append(" × ").append(item.getProduto().getNome())
-                    .append(" • preço unitário: ").append(money(item.getPrecoUnitario()))
-                    .append(" • subtotal: ").append(money(item.getSubtotal())).append('\n');
-            text.append("\nTotal: ").append(money(pedido.getTotal()));
+                    .append("\n   Unitário: ").append(money(item.getPrecoUnitario()))
+                    .append("   •   Subtotal: ").append(money(item.getSubtotal())).append("\n\n");
+            text.append("TOTAL DO PEDIDO\n").append(money(pedido.getTotal()));
             details.setText(text.toString());
         });
         Button selectButton = (Button) dialog.getDialogPane().lookupButton(select); selectButton.setId("selectOrder");
@@ -386,7 +396,7 @@ public class MenuController {
         if (activeOrder != null) list.getSelectionModel().select(activeOrder);
         dialog.showAndWait().ifPresent(pedido -> {
             activeOrder = pedido; selectedMesa = pedido.getMesa(); renderOrder(); renderProducts();
-            statusLabel.setText("Pedido #" + pedido.getNumeroPedido() + " selecionado para incluir itens.");
+            showStatus("Pedido #" + pedido.getNumeroPedido() + " selecionado para incluir itens.", false);
         });
     }
 }
