@@ -16,6 +16,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class HelloApplication extends Application {
     @Override
@@ -37,7 +40,7 @@ public class HelloApplication extends Application {
         }
 
         try {
-            Media media = new Media(videoUrl.toExternalForm());
+            Media media = new Media(resolveMediaSource(videoUrl));
             MediaPlayer player = new MediaPlayer(media);
             MediaView mediaView = new MediaView(player);
             mediaView.setPreserveRatio(true);
@@ -75,10 +78,26 @@ public class HelloApplication extends Application {
             stage.show();
             player.setVolume(1.0);
             player.play();
-        } catch (MediaException exception) {
+        } catch (MediaException | IOException exception) {
             System.err.println("Falha ao iniciar o vídeo de abertura: " + exception.getMessage());
             stage.setScene(applicationScene);
             stage.show();
+        }
+    }
+
+    private static String resolveMediaSource(URL videoUrl) throws IOException {
+        if ("file".equalsIgnoreCase(videoUrl.getProtocol())) {
+            return videoUrl.toExternalForm();
+        }
+
+        Path temporaryVideo = Files.createTempFile("nucita-abertura-", ".mp4");
+        try (var videoStream = videoUrl.openStream()) {
+            Files.copy(videoStream, temporaryVideo, StandardCopyOption.REPLACE_EXISTING);
+            temporaryVideo.toFile().deleteOnExit();
+            return temporaryVideo.toUri().toString();
+        } catch (IOException exception) {
+            Files.deleteIfExists(temporaryVideo);
+            throw exception;
         }
     }
 }
