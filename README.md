@@ -4,6 +4,8 @@ Aplicação Java para organizar o atendimento de uma lanchonete. Este repositór
 
 A interface utiliza as operações existentes de cadastro de produtos e mesas, criação de pedidos e inclusão de itens. O fluxo de console continua disponível. Os dados ficam apenas em memória durante a execução.
 
+Ao iniciar o aplicativo, um vídeo de apresentação é reproduzido com áudio. A pessoa pode pular a introdução; quando ela termina, o atendimento é aberto.
+
 ![Interface JavaFX integrada ao projeto principal, com dados de teste](docs/images/atendimento-javafx.png)
 
 *A imagem usa cadastros criados no processo de teste. A aplicação inicia sem dados de demonstração.*
@@ -18,6 +20,7 @@ A interface utiliza as operações existentes de cadastro de produtos e mesas, c
 | Itens | Adicionar produtos cadastrados, somar quantidades do mesmo produto, alterar quantidade e remover itens enquanto o pedido estiver aberto. |
 | Valores | Guardar o preço da inclusão, calcular subtotal por item e total atualizado do pedido, usando `double`. |
 | Atendimento | Consultar pedidos, continuar os que estão abertos e manter vários pedidos para a mesma mesa. |
+| Abertura | Reproduzir o vídeo de apresentação com áudio ao iniciar o aplicativo, com opção para pular. |
 
 A camada JavaFX chama as classes de `application`, `domain` e `storage`. A [Issue 04](docs/ISSUE-04.md) acrescenta as operações de valores, alteração de quantidade e remoção, com as decisões aprovadas para o projeto. O armazenamento continua em memória.
 
@@ -30,7 +33,7 @@ A camada JavaFX chama as classes de `application`, `domain` e `storage`. A [Issu
 - Internet no primeiro carregamento das dependências.
 - Sessão gráfica para abrir o JavaFX e executar o teste da interface.
 
-As dependências do principal foram mantidas: JavaFX 21.0.6 e JUnit 5.12.1. O compilador foi alinhado ao Java 21 utilizado pela interface.
+As dependências do principal foram mantidas: JavaFX 21.0.6, incluindo JavaFX Media para a abertura, e JUnit 5.12.1. O compilador foi alinhado ao Java 21 utilizado pela interface.
 
 ## Executar
 
@@ -50,7 +53,7 @@ bash ./mvnw javafx:run
 
 No IntelliJ, abra o `pom.xml` da raiz, configure o SDK para Java 21, carregue as dependências e execute o objetivo Maven `javafx:run`.
 
-O comando mantém a entrada `HelloApplication` e abre a interface de atendimento. Para usar o fluxo de console de produtos e mesas, execute `com.senai.nucitalanches.nucitalanches.console.Main` pela IDE.
+O comando mantém a entrada `HelloApplication`, reproduz a abertura e depois mostra a interface de atendimento. Para usar o fluxo de console de produtos e mesas, execute `com.senai.nucitalanches.nucitalanches.console.Main` pela IDE.
 
 ## Usar a interface
 
@@ -111,6 +114,7 @@ src/main/resources/com/senai/nucitalanches/nucitalanches/
 ├── view/cardapio.fxml
 ├── css/javafx-nucita-theme.css
 ├── images/logo.png
+├── videos/abertura.mp4
 └── hello-view.fxml           # Exemplo original preservado
 src/test/java/                # Testes originais e integração JavaFX
 ```

@@ -1,6 +1,6 @@
 # Arquitetura atual
 
-O projeto é uma aplicação Java modular, com um único `pom.xml` e o Maven Wrapper do repositório principal. O plugin JavaFX continua iniciando `HelloApplication`, agora com a interface de atendimento incorporada do repositório `Teste-JavaFX`. `console.Main` mantém o menu de texto existente.
+O projeto é uma aplicação Java modular, com um único `pom.xml` e o Maven Wrapper do repositório principal. O plugin JavaFX continua iniciando `HelloApplication`, agora com a interface de atendimento incorporada do repositório `Teste-JavaFX`. Na inicialização, `HelloApplication` reproduz `videos/abertura.mp4` com áudio; ao terminar ou quando a pessoa pula o vídeo, mostra o atendimento. `console.Main` mantém o menu de texto existente.
 
 ## Pacotes Java
 
@@ -47,6 +47,7 @@ Os recursos estão sob `src/main/resources/com/senai/nucitalanches/nucitalanches
 - `view/cardapio.fxml`: tela de atendimento.
 - `css/javafx-nucita-theme.css`: tema da interface e formulários.
 - `images/logo.png`: imagem da marca usada pela interface.
+- `videos/abertura.mp4`: vídeo de apresentação reproduzido na inicialização por JavaFX Media.
 - `hello-view.fxml`: exemplo original preservado.
 
 A estrutura modular e os comandos `mvnw javafx:run` / `mvnw test` continuam na raiz. A compilação usa Java 21, compatível com a sintaxe e as APIs da interface incorporada. As versões de JavaFX, JUnit e dos plugins do principal foram mantidas.
@@ -55,4 +56,4 @@ A estrutura modular e os comandos `mvnw javafx:run` / `mvnw test` continuam na r
 
 As regressões anteriores foram mantidas e ampliadas para os critérios das issues #7 a #9. Os testes cobrem validação de produtos e mesas, pedidos vazios e com itens, finalização e bloqueio de alterações. `ui.MenuControllerIntegrationTest` abre `HelloApplication`, usa os botões e formulários reais e verifica as alterações nas mesmas coleções de `BancoDeDados`, incluindo a finalização pela interface.
 
-O teste da interface cobre cadastros, consultas, duplicidade de mesa, validações de preço/quantidade, criação e seleção de pedidos, associação de mesa e largura dos cartões. As capturas ficam em `target/ui-check/`; dados e capturas de teste não são carregados pelo programa.
+O teste da interface cobre cadastros, consultas, duplicidade de mesa, validações de preço/quantidade, criação e seleção de pedidos, associação de mesa e largura dos cartões. O teste define `nucita.skipIntro` para acessar diretamente a interface. As capturas ficam em `target/ui-check/`; dados e capturas de teste não são carregados pelo programa.
