@@ -10,7 +10,7 @@
         <mxCell id="subtitle" value="Entidades e relacionamentos · estrutura lógica proposta para os dados" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#38262D;fontSize=14;text;align=left;fontSize=14;fontColor=#806A6A;" vertex="1" parent="1">
           <mxGeometry x="40" y="72" width="1320" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="foot" value="MODELAGEM PROPOSTA · Fonte: PROJECT_CONTEXT.md e issue #4 · Não representa confirmação de implementação." style="html=1;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#38262D;fontSize=14;text;align=left;fontSize=12;fontColor=#806A6A;" vertex="1" parent="1">
+        <mxCell id="foot" value="MODELAGEM PROPOSTA · Fonte: docs/PROJECT_CONTEXT.md e issue #4 · Não representa confirmação de implementação." style="html=1;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#38262D;fontSize=14;text;align=left;fontSize=12;fontColor=#806A6A;" vertex="1" parent="1">
           <mxGeometry x="40" y="950" width="1320" height="28" as="geometry" />
         </mxCell>
         <mxCell id="mesa" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#38262D;fontSize=14;rounded=0;fillColor=#FFFCF8;strokeColor=#A88B8E;" vertex="1" parent="1">
@@ -108,7 +108,7 @@
         <mxCell id="subtitle" value="Modelo de domínio proposto · responsabilidades, tipos e associações UML" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#38262D;fontSize=14;text;align=left;fontSize=14;fontColor=#806A6A;" vertex="1" parent="1">
           <mxGeometry x="40" y="72" width="1320" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="foot" value="MODELAGEM PROPOSTA · Fonte: PROJECT_CONTEXT.md e issue #4 · Não representa confirmação de implementação." style="html=1;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#38262D;fontSize=14;text;align=left;fontSize=12;fontColor=#806A6A;" vertex="1" parent="1">
+        <mxCell id="foot" value="MODELAGEM PROPOSTA · Fonte: docs/PROJECT_CONTEXT.md e issue #4 · Não representa confirmação de implementação." style="html=1;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#38262D;fontSize=14;text;align=left;fontSize=12;fontColor=#806A6A;" vertex="1" parent="1">
           <mxGeometry x="40" y="950" width="1320" height="28" as="geometry" />
         </mxCell>
         <mxCell id="Mesa" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#38262D;fontSize=14;rounded=0;fillColor=#FFFCF8;strokeColor=#A88B8E;" vertex="1" parent="1">
@@ -227,7 +227,7 @@
         <mxCell id="subtitle" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#38262D;fontSize=14;text;align=left;fontSize=14;fontColor=#806A6A;" value="Funcionalidades documentadas · interação do atendente com o sistema" vertex="1">
           <mxGeometry height="30" width="1320" x="40" y="72" as="geometry" />
         </mxCell>
-        <mxCell id="foot" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#38262D;fontSize=14;text;align=left;fontSize=12;fontColor=#806A6A;" value="MODELAGEM PROPOSTA · Fonte: PROJECT_CONTEXT.md e issue #4 · Não representa confirmação de implementação." vertex="1">
+        <mxCell id="foot" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#38262D;fontSize=14;text;align=left;fontSize=12;fontColor=#806A6A;" value="MODELAGEM PROPOSTA · Fonte: docs/PROJECT_CONTEXT.md e issue #4 · Não representa confirmação de implementação." vertex="1">
           <mxGeometry height="28" width="1320" x="40" y="950" as="geometry" />
         </mxCell>
         <mxCell id="system" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#38262D;fontSize=14;rounded=1;arcSize=3;fillColor=#FFFCF8;strokeColor=#BAA19F;verticalAlign=top;spacingTop=15;fontSize=18;fontStyle=1;" value="Sistema de pedidos · Nucita Lanches" vertex="1">

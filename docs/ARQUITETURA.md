@@ -17,11 +17,11 @@ O prefixo dos pacotes abaixo é `com.senai.nucitalanches.nucitalanches`.
 
 ## Fluxo da interface
 
-`HelloApplication` carrega `view/cardapio.fxml`. O FXML usa `ui.MenuController`, com acesso reflexivo autorizado em `module-info.java` exclusivamente para `javafx.fxml`.
+`HelloApplication` reproduz o vídeo de abertura e depois carrega `view/cardapio.fxml`. O FXML usa `ui.MenuController`, com acesso reflexivo autorizado em `module-info.java` exclusivamente para `javafx.fxml`.
 
-`MenuController` mantém o estado compartilhado da apresentação — mesa selecionada e pedido ativo — e coordena os componentes. `ProductCatalogController` filtra e renderiza os produtos; `OrderPanelController` renderiza os itens e delega edição e remoção. `ProductDialogController`, `TableDialogController`, `OrdersDialogController` e `QuantityDialogController` isolam os fluxos dos diálogos. Esses componentes chamam as classes de negócio existentes; não mantêm cópias dos dados.
+Depois da introdução, `MenuController` coordena os componentes e mantém o estado compartilhado da apresentação: texto de busca, mesa selecionada para o próximo pedido e pedido exibido. `ProductCatalogController` filtra e renderiza os produtos; `OrderPanelController` renderiza os itens e delega edição e remoção. `ProductDialogController`, `TableDialogController`, `OrdersDialogController` e `QuantityDialogController` isolam os fluxos dos diálogos. Os registros são obtidos e alterados pelas classes de negócio existentes, sem cópias dos dados. As imagens de produtos são escolhidas por arquivo local e associadas pelo campo `Produto.imagemUrl`; o caminho não é copiado nem persistido.
 
-- Produtos: `Restaurante.cadastroProduto` e `listarProdutos`.
+- Produtos: `Restaurante.cadastroProduto` e `listarProdutos`; a interface também associa imagens locais aos produtos selecionados.
 - Mesas: `Restaurante.cadastrarMesa`, `consultarMesaPorNumero` e `listarMesas`.
 - Pedidos: `Restaurante.criarPedido`, `adicionarItemAoPedido` e `finalizarPedido`.
 - Alterações: `Restaurante.alterarQuantidadeItem` e `removerItemDoPedido`, verificando que o item pertence ao pedido.
@@ -48,6 +48,7 @@ Os recursos estão sob `src/main/resources/com/senai/nucitalanches/nucitalanches
 - `css/javafx-nucita-theme.css`: tema da interface e formulários.
 - `images/logo.png`: imagem da marca usada pela interface.
 - `videos/abertura.mp4`: vídeo de apresentação reproduzido na inicialização por JavaFX Media.
+- Imagens dos produtos: arquivos locais escolhidos em tempo de execução; não fazem parte dos recursos empacotados.
 - `hello-view.fxml`: exemplo original preservado.
 
 A estrutura modular e os comandos `mvnw javafx:run` / `mvnw test` continuam na raiz. A compilação usa Java 21, compatível com a sintaxe e as APIs da interface incorporada. As versões de JavaFX, JUnit e dos plugins do principal foram mantidas.
