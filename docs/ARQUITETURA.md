@@ -12,14 +12,14 @@ O prefixo dos pacotes abaixo é `com.senai.nucitalanches.nucitalanches`.
 | `application` | `Restaurante`, com cadastros, operações de pedido e coordenação da finalização. |
 | `storage` | Classe original `BancoDeDados`, singleton com produtos, mesas e pedidos em memória. |
 | `console` | Menu original de cadastro/listagem de produtos e cadastro/consulta/listagem de mesas. |
-| `ui` | `MenuController` e `UiIcons`: apresentação JavaFX e adaptação dos campos para chamadas às operações existentes. |
+| `ui` | `MenuController` coordena a tela principal; `ProductCatalogController` e `OrderPanelController` cuidam do catálogo e do pedido visível; controllers de diálogo tratam produtos, mesas, pedidos e quantidades. `ProductVisuals`, `UiSupport` e `UiIcons` reúnem apresentação compartilhada. |
 | Pacote base | `HelloApplication`, `Launcher` e o controller do exemplo original. |
 
 ## Fluxo da interface
 
 `HelloApplication` carrega `view/cardapio.fxml`. O FXML usa `ui.MenuController`, com acesso reflexivo autorizado em `module-info.java` exclusivamente para `javafx.fxml`.
 
-O controller mantém apenas o estado da apresentação: texto de busca, mesa selecionada para o próximo pedido e pedido exibido. Os registros são obtidos e alterados pelas classes originais.
+`MenuController` mantém o estado compartilhado da apresentação — mesa selecionada e pedido ativo — e coordena os componentes. `ProductCatalogController` filtra e renderiza os produtos; `OrderPanelController` renderiza os itens e delega edição e remoção. `ProductDialogController`, `TableDialogController`, `OrdersDialogController` e `QuantityDialogController` isolam os fluxos dos diálogos. Esses componentes chamam as classes de negócio existentes; não mantêm cópias dos dados.
 
 - Produtos: `Restaurante.cadastroProduto` e `listarProdutos`.
 - Mesas: `Restaurante.cadastrarMesa`, `consultarMesaPorNumero` e `listarMesas`.

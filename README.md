@@ -106,7 +106,7 @@ src/main/java/
     ├── console/              # Menu de texto existente
     ├── domain/               # Modelos e validações existentes
     ├── storage/              # Armazenamento original em memória
-    ├── ui/                   # Controller e ícones da interface incorporada
+    ├── ui/                   # Coordenação, catálogo, pedido e diálogos JavaFX
     ├── HelloApplication.java # Entrada JavaFX mantida
     ├── HelloController.java  # Controller do exemplo original, preservado
     └── Launcher.java         # Iniciador existente
