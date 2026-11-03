@@ -26,7 +26,6 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-/** Liga a interface às operações já implementadas no projeto Nucita Lanches. */
 public class MenuController {
     @FXML private TextField searchField;
     @FXML private TilePane productGrid;
@@ -80,7 +79,6 @@ public class MenuController {
         return (first + (words.length > 1 ? Character.toString(words[words.length - 1].codePointAt(0)) : "")).toUpperCase(Locale.of("pt", "BR"));
     }
 
-    /** Tenta carregar uma imagem a partir de uma URL/URI; retorna {@code null} se for inválida. */
     private Image loadImage(String url, double width, double height) {
         if (url == null || url.isBlank()) return null;
         try {
@@ -91,7 +89,6 @@ public class MenuController {
         }
     }
 
-    /** Cria o topo visual do cartão do produto (com foto se houver, ou monograma padrão). */
     private StackPane createProductArtwork(Produto produto) {
         Circle ring = new Circle(43); ring.getStyleClass().add("product-art-ring");
         Label monogram = label(initials(produto.getNome()), "product-monogram");
@@ -127,7 +124,6 @@ public class MenuController {
         return imagePane;
     }
 
-    /** Cria um marcador em miniatura para listas e carrinho, ou usa as iniciais como fallback. */
     private Node createProductMarker(Produto produto, String fallbackStyle) {
         if (produto.possuiImagem()) {
             Image loaded = loadImage(produto.getImagemUrl(), 72, 72);

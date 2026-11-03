@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** Testa a associação do pedido com a mesa e o controle dos itens. */
 class PedidoTest {
 
     @Test
@@ -90,7 +89,6 @@ class PedidoTest {
         assertEquals((double) Integer.MAX_VALUE, pedido.getTotal(), 1e-9);
     }
 
-    /** Garante que o pedido começa ligado à mesa e aberto. */
     @Test
     void criaPedidoAbertoVinculadoAMesa() {
         Mesa mesa = new Mesa(1);
@@ -102,13 +100,11 @@ class PedidoTest {
         assertEquals(0, pedido.getItens().size());
     }
 
-    /** Garante que o modelo não aceita pedido sem mesa. */
     @Test
     void rejeitaMesaNula() {
         assertThrows(IllegalArgumentException.class, () -> new Pedido(null));
     }
 
-    /** Confirma que o pedido guarda mais de um item na ordem de inclusão. */
     @Test
     void permiteAdicionarVariosItens() {
         Pedido pedido = new Pedido(new Mesa(1));
@@ -121,7 +117,6 @@ class PedidoTest {
         assertEquals(List.of(primeiro, segundo), pedido.getItens());
     }
 
-    /** Mantém o pedido vazio quando recebe um item nulo. */
     @Test
     void rejeitaItemNulo() {
         Pedido pedido = new Pedido(new Mesa(1));
@@ -130,7 +125,6 @@ class PedidoTest {
         assertEquals(0, pedido.getItens().size());
     }
 
-    /** Impede alterações externas na lista e devolve uma cópia atualizada. */
     @Test
     void listaDeItensNaoPodeSerAlteradaPeloChamador() {
         Pedido pedido = new Pedido(new Mesa(1));

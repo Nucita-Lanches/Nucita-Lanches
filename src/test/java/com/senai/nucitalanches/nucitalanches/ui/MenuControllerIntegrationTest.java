@@ -30,18 +30,25 @@ import java.util.zip.DeflaterOutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** Exercita os botões reais do FXML e confere as alterações no domínio. Requer ambiente gráfico. */
 class MenuControllerIntegrationTest {
     private Parent root;
     private Stage stage;
 
     @Test
     void conectaCadastrosMesasEPedidosPelaInterface() throws Exception {
+        String previousSkipIntro = System.getProperty("nucita.skipIntro");
+        System.setProperty("nucita.skipIntro", "true");
         FutureTask<Void> task = new FutureTask<>(() -> { verifyFlow(); return null; });
-        Platform.startup(() -> Platform.setImplicitExit(false));
-        Platform.runLater(task);
-        try { task.get(40, TimeUnit.SECONDS); }
-        finally { Platform.exit(); }
+        try {
+            Platform.startup(() -> Platform.setImplicitExit(false));
+            Platform.runLater(task);
+            task.get(40, TimeUnit.SECONDS);
+        }
+        finally {
+            Platform.exit();
+            if (previousSkipIntro == null) System.clearProperty("nucita.skipIntro");
+            else System.setProperty("nucita.skipIntro", previousSkipIntro);
+        }
     }
 
     private void verifyFlow() throws Exception {
@@ -240,7 +247,6 @@ class MenuControllerIntegrationTest {
         } catch (Exception exception) { throw new AssertionError(exception); }
     }
 
-    /** Salva a captura sem adicionar dependências de AWT ao módulo da aplicação. */
     private void writePng(WritableImage image, Path path) throws IOException {
         int width = (int) image.getWidth(), height = (int) image.getHeight();
         ByteArrayOutputStream pixels = new ByteArrayOutputStream();

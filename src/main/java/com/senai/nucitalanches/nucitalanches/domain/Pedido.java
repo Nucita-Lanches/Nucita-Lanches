@@ -4,19 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Representa um pedido de uma mesa e os itens incluídos nele. */
 public class Pedido {
     private Integer numeroPedido;
     private final Mesa mesa;
     private final List<ItemPedido> itens = new ArrayList<>();
     private StatusPedido status = StatusPedido.ABERTO;
 
-    /**
-     * Cria um pedido para uma mesa.
-     *
-     * @param mesa mesa associada ao pedido
-     * @throws IllegalArgumentException se a mesa for nula
-     */
     public Pedido(Mesa mesa) {
         if (mesa == null) {
             throw new IllegalArgumentException("Mesa do pedido não pode ser nula.");
@@ -24,33 +17,22 @@ public class Pedido {
         this.mesa = mesa;
     }
 
-    /** Retorna o número atribuído ao pedido pelo armazenamento. */
     public Integer getNumeroPedido() {
         return numeroPedido;
     }
 
-    /** Define o número do pedido atribuído pelo armazenamento. */
     public void setNumeroPedido(Integer numeroPedido) {
         this.numeroPedido = numeroPedido;
     }
 
-    /** Retorna a mesa associada ao pedido. */
     public Mesa getMesa() {
         return mesa;
     }
 
-    /** Retorna uma cópia somente para leitura dos itens do pedido. */
     public List<ItemPedido> getItens() {
         return Collections.unmodifiableList(new ArrayList<>(itens));
     }
 
-    /**
-     * Adiciona um item ou soma sua quantidade à do mesmo produto, mantendo o preço original.
-     *
-     * @param item item a ser adicionado
-     * @return item incluído ou item existente cuja quantidade foi somada
-     * @throws IllegalArgumentException se o item for nulo
-     */
     public ItemPedido adicionarItem(ItemPedido item) {
         garantirAberto();
         if (item == null) {
@@ -72,21 +54,18 @@ public class Pedido {
         return item;
     }
 
-    /** Atualiza a quantidade de um item que pertence a este pedido. */
     public void alterarQuantidadeItem(ItemPedido item, Integer quantidade) {
         garantirAberto();
         validarItemDoPedido(item);
         item.setQuantidade(quantidade);
     }
 
-    /** Remove um item deste pedido; o total é recalculado na próxima consulta. */
     public void removerItem(ItemPedido item) {
         garantirAberto();
         validarItemDoPedido(item);
         itens.remove(item);
     }
 
-    /** Finaliza o pedido quando ele contém ao menos um item. */
     public void finalizar() {
         garantirAberto();
         if (itens.isEmpty()) {
@@ -107,12 +86,10 @@ public class Pedido {
         }
     }
 
-    /** Soma os subtotais atuais, sem manter um total em cache. */
     public double getTotal() {
         return itens.stream().mapToDouble(ItemPedido::getSubtotal).sum();
     }
 
-    /** Retorna o estado atual do pedido. */
     public StatusPedido getStatus() {
         return status;
     }

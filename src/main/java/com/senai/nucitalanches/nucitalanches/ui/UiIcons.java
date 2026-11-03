@@ -3,7 +3,6 @@ package com.senai.nucitalanches.nucitalanches.ui;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.SVGPath;
 
-/** Ícones vetoriais locais, com o mesmo traço em toda a interface. */
 final class UiIcons {
     private UiIcons() { }
 
