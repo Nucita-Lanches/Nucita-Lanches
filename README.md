@@ -14,7 +14,7 @@ Ao iniciar o aplicativo, um vídeo de apresentação é reproduzido com áudio. 
 
 | Área | Operações disponíveis |
 | --- | --- |
-| Produtos | Cadastrar nome e preço e listar produtos. Na interface, a listagem pode ser filtrada por nome. |
+| Produtos | Cadastrar nome e preço, associar uma imagem local e listar produtos. Na interface, a listagem pode ser filtrada por nome. |
 | Mesas | Cadastrar um número positivo e único, consultar pelo número, listar e selecionar para atendimento. |
 | Pedidos | Criar pedido para mesa cadastrada, consultar e finalizar pedidos com itens. Pedidos finalizados não aceitam alterações. |
 | Itens | Adicionar produtos cadastrados, somar quantidades do mesmo produto, alterar quantidade e remover itens enquanto o pedido estiver aberto. |
@@ -24,7 +24,7 @@ Ao iniciar o aplicativo, um vídeo de apresentação é reproduzido com áudio. 
 
 A camada JavaFX chama as classes de `application`, `domain` e `storage`. A [Issue 04](docs/ISSUE-04.md) acrescenta as operações de valores, alteração de quantidade e remoção, com as decisões aprovadas para o projeto. O armazenamento continua em memória.
 
-**Limitações atuais:** os dados permanecem apenas em memória e são apagados ao fechar o aplicativo. A inclusão de imagens dos produtos está descrita na [issue #21](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/21), ainda sem critérios detalhados.
+**Limitações atuais:** produtos, mesas, pedidos e referências às imagens permanecem apenas na memória e são apagados ao fechar o aplicativo. As imagens são escolhidas como arquivos locais e não são copiadas para o projeto.
 
 ## Requisitos
 
@@ -48,7 +48,7 @@ No Windows PowerShell:
 No Linux ou macOS:
 
 ```bash
-bash ./mvnw javafx:run
+./mvnw javafx:run
 ```
 
 No IntelliJ, abra o `pom.xml` da raiz, configure o SDK para Java 21, carregue as dependências e execute o objetivo Maven `javafx:run`.
@@ -58,11 +58,12 @@ O comando mantém a entrada `HelloApplication`, reproduz a abertura e depois mos
 ## Usar a interface
 
 1. Abra **Produtos**, informe nome e preço e cadastre os itens do cardápio.
-2. Abra **Mesas**, cadastre ou consulte uma mesa e selecione **Usar no próximo pedido**.
-3. Clique em **Novo pedido** para criar o atendimento vinculado à mesa.
-4. No cardápio, clique em **Adicionar**, informe a quantidade e confirme.
-5. Abra **Pedidos** e escolha **Continuar pedido** para incluir itens em um pedido já criado.
-6. Com um pedido aberto e com itens, use **Finalizar pedido** no painel de atendimento. O sistema bloqueia novas inclusões, alterações e remoções.
+2. Se quiser associar uma imagem, selecione um produto cadastrado e use **Definir imagem no produto selecionado**. O arquivo permanece no local escolhido e não é copiado para o projeto.
+3. Abra **Mesas**, cadastre ou consulte uma mesa e selecione **Usar no próximo pedido**.
+4. Clique em **Novo pedido** para criar o atendimento vinculado à mesa.
+5. No cardápio, clique em **Adicionar**, informe a quantidade e confirme.
+6. Abra **Pedidos** e escolha **Continuar pedido** para incluir itens em um pedido já criado.
+7. Com um pedido aberto e com itens, use **Finalizar pedido** no painel de atendimento. O sistema bloqueia novas inclusões, alterações e remoções.
 
 O campo de preço aceita ponto ou vírgula como separador decimal e entrega o valor ao modelo `Produto`, que valida nome e preço. Não há regra adicional de duas casas decimais no cadastro; a exibição monetária é apenas uma formatação da tela.
 
@@ -84,7 +85,7 @@ Compilar e empacotar:
 .\mvnw.cmd clean package
 ```
 
-No Linux ou macOS, use `bash ./mvnw` no lugar de `.\mvnw.cmd`.
+No Linux ou macOS, use `./mvnw` no lugar de `.\mvnw.cmd`.
 
 A suíte Maven cobre **38 testes**: 37 testes de domínio/aplicação e um teste de integração que abre a aplicação e usa os formulários JavaFX. São verificados cadastros, validações, criação e manutenção de pedidos, cálculos, finalização, bloqueio de alterações e layout da interface.
 
@@ -123,6 +124,15 @@ A interface veio de [Nucita-Lanches/Teste-JavaFX](https://github.com/Nucita-Lanc
 
 ## Contribuir
 
-Crie uma branch própria a partir de `main`, faça alterações relacionadas a uma tarefa e abra um Pull Request para revisão, conforme [`CONTRIBUTING.md`](CONTRIBUTING.md) e [`DEVELOPMENT_PIPELINE.md`](DEVELOPMENT_PIPELINE.md).
+O README é a entrada principal do projeto; a documentação detalhada fica em `docs/`. As contribuições seguem [`CONTRIBUTING.md`](CONTRIBUTING.md) e [`docs/DEVELOPMENT_PIPELINE.md`](docs/DEVELOPMENT_PIPELINE.md). Crie uma branch própria a partir de `main`, faça alterações relacionadas a uma tarefa e abra um Pull Request para revisão.
 
-Documentação: [diagrama do modelo](Nucita-Lanches-modelagem-completa.drawio), [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md), [`docs/INTEGRACAO-JAVAFX.md`](docs/INTEGRACAO-JAVAFX.md), [`docs/ISSUE-04.md`](docs/ISSUE-04.md) e [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md). As issues relacionadas a validações, finalização, testes e documentação são [#7](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/7), [#8](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/8), [#9](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/9) e [#10](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/10); o PR que as implementa é [#22](https://github.com/Nucita-Lanches/Nucita-Lanches/pull/22).
+Guias do projeto:
+
+- [Contexto e regras](docs/PROJECT_CONTEXT.md)
+- [Arquitetura](docs/ARQUITETURA.md)
+- [Histórico e estado atual da integração JavaFX](docs/INTEGRACAO-JAVAFX.md)
+- [Regras de valores e itens](docs/ISSUE-04.md)
+- [Pipeline de desenvolvimento](docs/DEVELOPMENT_PIPELINE.md)
+- [Diagrama do modelo](Nucita-Lanches-modelagem-completa.drawio)
+
+As issues relacionadas a validações, finalização, testes e documentação são [#7](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/7), [#8](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/8), [#9](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/9) e [#10](https://github.com/Nucita-Lanches/Nucita-Lanches/issues/10); o PR que as implementa é [#22](https://github.com/Nucita-Lanches/Nucita-Lanches/pull/22).
