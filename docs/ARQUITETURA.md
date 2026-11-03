@@ -12,14 +12,14 @@ O prefixo dos pacotes abaixo é `com.senai.nucitalanches.nucitalanches`.
 | `application` | `Restaurante`, com cadastros, operações de pedido e coordenação da finalização. |
 | `storage` | Classe original `BancoDeDados`, singleton com produtos, mesas e pedidos em memória. |
 | `console` | Menu original de cadastro/listagem de produtos e cadastro/consulta/listagem de mesas. |
-| `ui` | `MenuController` e `UiIcons`: apresentação JavaFX e adaptação dos campos para chamadas às operações existentes. |
+| `ui` | `MenuController` coordena a tela principal; `ProductCatalogController` e `OrderPanelController` cuidam do catálogo e do pedido visível; controllers de diálogo tratam produtos, mesas, pedidos e quantidades. `ProductVisuals`, `UiSupport` e `UiIcons` reúnem apresentação compartilhada. |
 | Pacote base | `HelloApplication`, `Launcher` e o controller do exemplo original. |
 
 ## Fluxo da interface
 
 `HelloApplication` reproduz o vídeo de abertura e depois carrega `view/cardapio.fxml`. O FXML usa `ui.MenuController`, com acesso reflexivo autorizado em `module-info.java` exclusivamente para `javafx.fxml`.
 
-Depois da introdução, o controller mantém o estado da apresentação: texto de busca, mesa selecionada para o próximo pedido e pedido exibido. Os registros são obtidos e alterados pelas classes existentes. As imagens de produtos são escolhidas por arquivo local e associadas pelo campo `Produto.imagemUrl`; o caminho não é copiado nem persistido.
+Depois da introdução, `MenuController` coordena os componentes e mantém o estado compartilhado da apresentação: texto de busca, mesa selecionada para o próximo pedido e pedido exibido. `ProductCatalogController` filtra e renderiza os produtos; `OrderPanelController` renderiza os itens e delega edição e remoção. `ProductDialogController`, `TableDialogController`, `OrdersDialogController` e `QuantityDialogController` isolam os fluxos dos diálogos. Os registros são obtidos e alterados pelas classes de negócio existentes, sem cópias dos dados. As imagens de produtos são escolhidas por arquivo local e associadas pelo campo `Produto.imagemUrl`; o caminho não é copiado nem persistido.
 
 - Produtos: `Restaurante.cadastroProduto` e `listarProdutos`; a interface também associa imagens locais aos produtos selecionados.
 - Mesas: `Restaurante.cadastrarMesa`, `consultarMesaPorNumero` e `listarMesas`.
