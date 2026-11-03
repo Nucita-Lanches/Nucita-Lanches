@@ -1,53 +1,42 @@
 # Integração da interface JavaFX
 
-Este documento registra a integração inicial (PR #19). As operações implementadas depois dela para cálculo de valores e manutenção dos itens estão descritas em [`ISSUE-04.md`](ISSUE-04.md).
+Este documento registra a origem da interface integrada e descreve como ela funciona no estado atual do projeto. O resumo principal e os comandos de execução ficam no [README](../README.md); a estrutura das classes está em [ARQUITETURA.md](ARQUITETURA.md).
 
-## Origem e destino
+## Histórico
 
-- Base: `Nucita-Lanches/Nucita-Lanches`, commit `f30e1d1c86a10699b87a8db29fc2b1498f81faf6` da `main`.
-- Interface: `Nucita-Lanches/Teste-JavaFX`, commit `2758cd125dd047922e9cd9749ecd97856b16ec11` da `main`, arquivos de `outputs/`.
-- Branch de trabalho no principal: `feat/unificar-javafx-java`.
+A integração inicial foi entregue no [PR #19](https://github.com/Nucita-Lanches/Nucita-Lanches/pull/19). A interface veio do repositório [Nucita-Lanches/Teste-JavaFX](https://github.com/Nucita-Lanches/Teste-JavaFX), commit [`2758cd1`](https://github.com/Nucita-Lanches/Teste-JavaFX/commit/2758cd125dd047922e9cd9749ecd97856b16ec11), e foi adaptada para usar as classes de negócio deste repositório.
 
-Foram incorporados o controller da interface, os ícones vetoriais, o FXML, o CSS, a imagem da marca e o teste da interface. Os pacotes e caminhos de recursos foram adaptados ao projeto principal.
+As limitações descritas durante aquele PR são históricas. Desde então, o projeto adicionou cálculo de valores e manutenção de itens, finalização de pedidos, imagens opcionais para produtos e o vídeo de abertura. O README e a documentação de arquitetura descrevem o comportamento atual.
 
-## Uma única implementação das regras
+## Arquitetura atual
 
-Na integração inicial, os arquivos existentes em `application/`, `domain/`, `storage/` e `console/` foram preservados. Os testes originais também foram mantidos nessa etapa.
+`HelloApplication` inicia a reprodução de `videos/abertura.mp4` usando JavaFX Media. O vídeo inclui áudio; a pessoa pode pulá-lo ou aguardar o término. Se ocorrer uma falha de carregamento ou reprodução, a aplicação registra o erro e abre o atendimento. Em seguida, a tela carrega `view/cardapio.fxml`, controlada por `ui.MenuController`.
 
-A integração não traz as cópias de classes de negócio que existiam no projeto JavaFX. O controller usa diretamente os objetos e métodos do principal. Não foram incluídas operações de exclusão, edição, autenticação, pagamento, finalização ou persistência que não existam no principal.
+O controller usa diretamente as classes de `application`, `domain` e `storage`. Não há cópias das regras de negócio dentro da interface nem dependência de rede entre os projetos. `console.Main` mantém o fluxo de console.
 
-O filtro de nome, a seleção da mesa para o próximo pedido e a seleção do pedido a exibir são estados da apresentação; não modificam as regras ou a associação dos pedidos existentes.
+## Operações disponíveis
 
-## Correspondência das ações
-
-| Ação na tela | Operação existente |
+| Ação na interface | Operação usada |
 | --- | --- |
-| Cadastrar produto | `Restaurante.cadastroProduto(new Produto(...))` |
-| Mostrar cardápio | `Restaurante.listarProdutos()` |
-| Cadastrar mesa | `Restaurante.cadastrarMesa(new Mesa(...))` |
-| Consultar mesa | `Restaurante.consultarMesaPorNumero(...)` |
-| Listar mesas | `Restaurante.listarMesas()` |
-| Novo pedido | `Restaurante.criarPedido(...)` |
-| Adicionar produto e quantidade | `Restaurante.adicionarItemAoPedido(...)` |
-| Consultar pedidos e itens | `BancoDeDados.listarPedidos()` e `Pedido.getItens()` |
+| Cadastrar e listar produtos | `Restaurante.cadastroProduto` e `Restaurante.listarProdutos` |
+| Associar uma imagem a um produto | Atualiza `Produto.imagemUrl` para o arquivo local selecionado |
+| Cadastrar, consultar e listar mesas | `Restaurante.cadastrarMesa`, `consultarMesaPorNumero` e `listarMesas` |
+| Abrir pedido para mesa cadastrada | `Restaurante.criarPedido` |
+| Adicionar produto cadastrado e quantidade | `Restaurante.adicionarItemAoPedido` |
+| Consultar pedidos e itens | `BancoDeDados.listarPedidos` e `Pedido.getItens` |
+| Alterar quantidade ou remover item | `Restaurante.alterarQuantidadeItem` e `removerItemDoPedido` |
+| Consultar subtotal e total | `ItemPedido.getSubtotal` e `Pedido.getTotal` |
+| Finalizar pedido | `Restaurante.finalizarPedido` |
 
-O preço digitado é convertido para o tipo usado por `Produto`. A validação de valor finito/não negativo continua no modelo. A restrição de duas casas decimais da interface anterior não foi incorporada; a tela apenas formata valores monetários para exibição.
+O modelo valida os dados e impede alterações em pedidos finalizados. As operações de valores mantêm o preço do momento da inclusão e usam `double`, conforme as decisões registradas em [ISSUE-04.md](ISSUE-04.md).
 
-## Ajustes de execução
+## Recursos e limites
 
-`HelloApplication`, já configurada no Maven, abre o FXML do atendimento. `Launcher`, o fluxo do console, `HelloController` e `hello-view.fxml` foram mantidos. `module-info.java` abre o pacote `ui` ao carregador FXML.
+- O vídeo e o logo são recursos empacotados no projeto. JavaFX Media reproduz o vídeo na inicialização; o volume geral do sistema continua controlando a saída de áudio.
+- As imagens dos produtos são escolhidas no computador e mantidas como URI no objeto `Produto`. O projeto não copia os arquivos nem persiste o catálogo.
+- Produtos, mesas e pedidos ficam em memória e são apagados ao fechar o aplicativo.
+- O fluxo de console continua disponível pela classe `com.senai.nucitalanches.nucitalanches.console.Main`.
 
-O compilador foi alinhado ao Java 21 utilizado pelo código da interface. O Maven Wrapper, as coordenadas do projeto, as dependências e as versões dos plugins do principal permanecem as mesmas. A execução passa a ser feita inteiramente a partir da raiz do principal.
+## Validação
 
-## Verificação
-
-Antes da integração, os 13 testes originais passaram. Depois da integração, a validação inclui esses mesmos testes e o fluxo completo da interface oficial. O comparativo com a base verifica que os arquivos de negócio, console e testes originais não sofreram alterações.
-
-Comandos a partir da raiz, no Windows:
-
-```powershell
-.\mvnw.cmd test
-.\mvnw.cmd javafx:run
-```
-
-O teste JavaFX requer sessão gráfica. O armazenamento continua em memória e todos os pedidos começam abertos, conforme o código original. As operações ainda planejadas não foram adicionadas à interface.
+A suíte atual tem 38 testes, incluindo um teste de integração da interface. O teste define `nucita.skipIntro` para validar os formulários sem aguardar a reprodução do vídeo. Consulte o [README](../README.md) para os comandos atualizados e requisitos da sessão gráfica.
