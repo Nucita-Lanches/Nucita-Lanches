@@ -4,7 +4,7 @@ Aplicação Java para organizar o atendimento de uma lanchonete. Este repositór
 
 A interface utiliza as operações existentes de cadastro de produtos e mesas, criação de pedidos e inclusão de itens. O fluxo de console continua disponível. Os dados ficam apenas em memória durante a execução.
 
-Ao iniciar o aplicativo, um vídeo de apresentação é reproduzido com áudio. A pessoa pode pular a introdução; quando ela termina, o atendimento é aberto.
+Ao iniciar o aplicativo, um vídeo de apresentação é reproduzido com áudio. A pessoa pode pular a introdução; quando ela termina, o atendimento é aberto. Se o reprodutor não carregar em até 8 segundos, ou se a reprodução parar de avançar, a introdução é encerrada e o atendimento abre automaticamente.
 
 ![Interface JavaFX integrada ao projeto principal, com dados de teste](docs/images/atendimento-javafx.png)
 
